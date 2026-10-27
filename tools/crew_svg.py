@@ -23,8 +23,8 @@ def trace(mask, name, fill):
     return [p.replace('fill="#000000"', f'fill="{fill}"') for p in paths if "#000000" in p]
 
 
-def export(cls, cell, name, blue_cls, bg_cls):
-    """cell = (col,row) в сетке 3x2"""
+def export(cls, cell, name, blue_cls, bg_cls, largest=False):
+    """cell = (col,row) в сетке 3x2; largest — только самый крупный кусок (без отдельных значков рядом)"""
     h, w = cls.shape
     sil = cls != bg_cls
     lab, n = ndimage.label(ndimage.binary_dilation(sil, iterations=10))
@@ -33,6 +33,9 @@ def export(cls, cell, name, blue_cls, bg_cls):
     for j, (y, x) in enumerate(ndimage.center_of_mass(np.ones_like(lab), lab, range(1, n + 1)), 1):
         if int(x // (w / 3)) == cell[0] and int(y // (h / 2)) == cell[1]:
             keep |= lab == j
+    if largest:
+        sizes = ndimage.sum(keep, lab, range(1, n + 1))
+        keep = lab == (int(sizes.argmax()) + 1)
     sil &= keep
     blue = (cls == blue_cls) & keep
     ys, xs = np.where(sil)
@@ -46,7 +49,14 @@ def export(cls, cell, name, blue_cls, bg_cls):
         sub = m[sy:oy + s, sx:ox + s]
         out[sy - oy:sy - oy + sub.shape[0], sx - ox:sx - ox + sub.shape[1]] = sub
         return out
-    paths = trace(box(sil), name + "_sil", PALE) + trace(box(blue), name + "_blue", BLUE)
+    # подслой = цвет, которого больше на контуре силуэта; второй цвет сверху с захлёстом, чтобы не было светлой каймы
+    edge = sil & ~ndimage.binary_erosion(sil, iterations=3)
+    blue_edge = (blue & edge).sum() > edge.sum() / 2
+    base, top, top_fill = (BLUE, sil & ~blue, PALE) if blue_edge else (PALE, blue, BLUE)
+    over = max(2, s // 250)
+    paths = trace(box(sil), name + "_sil", base) + [
+        p.replace("/>", f' stroke="{top_fill}" stroke-width="{over}" stroke-linejoin="round"/>')
+        for p in trace(box(top), name + "_top", top_fill)]
     open(f"img/crew/{name}.svg", "w").write(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {s} {s}">' + "".join(paths) + "</svg>")
 
 
@@ -58,5 +68,5 @@ for name, cell in {"scout": (0, 0), "maker": (1, 0), "dispatcher": (0, 1), "insp
 # кот из v1: уже синий на тёмном
 v1 = classes("art/crew-v1.png", [[20, 77, 199], [184, 215, 255], [0, 3, 9], [235, 242, 255]])
 v1[v1 == 3] = 1
-export(v1, (0, 1), "typographer", 0, 2)
+export(v1, (0, 1), "typographer", 0, 2, largest=True)
 print("ok")
