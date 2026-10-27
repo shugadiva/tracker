@@ -365,6 +365,16 @@ document.addEventListener("click",e=>{
   if(e.target.closest("#lb")) $("lb").hidden=true;
 });
 document.addEventListener("keydown",e=>{if(e.key==="Escape")$("lb").hidden=true});
+/* висячие слова: после слов до трёх букв и после первого слова предложения пробел неразрывный (как в артефакте) */
+const SHORT=/(^|[\s(«"„])([А-Яа-яЁёA-Za-z0-9]{1,3}) /g, FIRST=/(^|[.!?…]\s)([А-ЯЁA-Z][А-Яа-яЁёA-Za-z-]*) /g;
+function nbsp(s){let o;do{o=s;s=s.replace(SHORT,"$1$2 ")}while(s!==o);return s.replace(FIRST,"$1$2 ")}
+function fixText(root){
+  if(root.nodeType===3){const v=nbsp(root.data);if(v!==root.data)root.data=v;return}
+  if(root.nodeType!==1||/^(SCRIPT|STYLE|TEXTAREA|INPUT)$/.test(root.nodeName))return;
+  const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n;
+  while(n=w.nextNode()){if(n.parentNode.closest("script,style"))continue;const v=nbsp(n.data);if(v!==n.data)n.data=v}
+}
+new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(fixText))).observe($("app"),{childList:true,subtree:true});
 unlock().then(()=>{addEventListener("hashchange",route);route()})
   .catch(e=>{$("app").innerHTML=`<p class="msg">Не загрузилось: ${esc(e.message)}</p>`});
 </script>
