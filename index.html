@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Трекер проектов</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700&display=swap">
+<style>
+/* Айдентика портфолио: тёмная тема, #000309 / #F5F8FF, синий акцент, один шрифт Manrope. Перенесено из артефакта «Правки YouTravel» */
+:root{
+  color-scheme:dark;
+  --bg:#000309; --surface:rgb(5 9 16 / .72); --surface-solid:#050910; --overlay:rgb(0 77 255 / .06);
+  --line:rgb(245 248 255 / .08); --line-strong:rgb(245 248 255 / .2);
+  --fg:#F5F8FF; --muted:#7A7D84; --soft:#9AA3B2;
+  --accent:#B8D7FF; --accent-soft:rgb(20 77 199 / .22); --focus:#5A94F5; --glow:rgb(19 97 199 / .32);
+  --inverse-bg:#F5F8FF; --inverse-fg:#000309;
+  --warn:#F1B45C; --warn-soft:rgb(241 180 92 / .14); --ok:#6CD29B; --ok-soft:rgb(108 210 155 / .14); --q:#B9A4FF; --q-soft:rgb(185 164 255 / .14);
+  --shot:#020814; --scrim:rgb(0 3 9 / .9);
+  --font:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+p,li,figcaption,summary{text-wrap:pretty}
+body{margin:0;background:var(--bg);color:var(--fg);font:500 15px/1.55 var(--font);letter-spacing:-.006em;min-height:100vh}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(70% 420px at 50% -120px,var(--glow) 0%,transparent 100%)}
+.wrap{position:relative;z-index:1;max-width:1040px;margin:0 auto;padding:24px max(16px,env(safe-area-inset-right,0px)) 96px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:48px}
+a{color:var(--accent);text-underline-offset:3px}
+button{font:700 14px/20px var(--font);border-radius:12px;padding:8px 14px;border:1px solid var(--line-strong);background:var(--overlay);color:var(--fg);cursor:pointer}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{display:inline-flex;align-items:center;gap:8px;padding:4px 16px;border-radius:100px;background:var(--overlay);border:1px solid var(--line);font-size:14px;line-height:20px;font-weight:700;color:var(--fg);text-decoration:none}
+a.brand:hover{border-color:var(--focus)}
+.tabs{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:100px;padding:4px;gap:2px}
+.tab{border:0;padding:6px 16px;border-radius:100px;background:none;color:var(--muted)}
+.tab:hover{color:var(--fg)}
+.tab[aria-selected="true"]{background:var(--inverse-bg);color:var(--inverse-fg)}
+.intro h1{font-size:48px;line-height:60px;font-weight:700;letter-spacing:-.04em;margin:0;text-wrap:balance}
+@media (max-width:640px){.intro h1{font-size:36px;line-height:44px;letter-spacing:-.03em}}
+.intro .lead{font-size:20px;line-height:28px;letter-spacing:-.018em;margin:16px 0 0;max-width:62ch}
+.intro .platform{font-size:14px;line-height:20px;color:var(--muted);margin:12px 0 0;max-width:72ch}
+.stamp{font-size:13px;color:var(--muted)}
+.progress-line{display:flex;flex-wrap:wrap;gap:8px 24px;margin-top:20px;font-size:14px;color:var(--muted)}
+.progress-line b{color:var(--accent);font-variant-numeric:tabular-nums}
+
+/* список проектов */
+.projects{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.pcard{display:flex;flex-direction:column;gap:12px;padding:20px;border-radius:20px;border:1px solid var(--line-strong);background:var(--surface);color:var(--fg);text-decoration:none}
+.pcard:hover{border-color:var(--focus)}
+.pcard h2{margin:0;font-size:24px;line-height:32px;letter-spacing:-.02em}
+.pcard p{margin:0;color:var(--soft)}
+.pcard .pmeta{display:flex;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.bar{height:6px;border-radius:3px;background:var(--line-strong);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ok)}
+
+.wait{background:var(--surface);border:1px solid var(--line-strong);border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:12px}
+.wait h2{margin:0;font-size:24px;line-height:32px;font-weight:700;letter-spacing:-.02em;display:flex;gap:10px;align-items:center}
+.count{display:inline-grid;place-items:center;min-width:28px;height:28px;padding:0 8px;border-radius:100px;background:var(--warn-soft);color:var(--warn);font-size:14px}
+.wait-empty{margin:0;color:var(--muted)}
+.wrow{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.wrow:first-of-type{border-top:0}
+.wtag{font:700 12px/1 var(--font);color:var(--accent);white-space:nowrap}
+.wtext p{margin:0}
+.wtext .why{font-size:13px;color:var(--muted);margin-top:2px}
+
+.branch-nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.branch-nav a{padding:6px 16px;border-radius:100px;border:1px solid var(--line-strong);background:var(--overlay);color:var(--fg);text-decoration:none;font-size:14px;line-height:20px;font-weight:700}
+.branch-nav a:hover{border-color:var(--focus)}
+.branch{display:flex;flex-direction:column;gap:40px;scroll-margin-top:16px}
+.bhead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px;padding:24px;border-radius:20px;border:1px solid var(--line-strong);background:linear-gradient(180deg,var(--accent-soft),transparent 140%)}
+.bhead h2{margin:0;font-size:36px;line-height:44px;font-weight:700;letter-spacing:-.03em}
+@media (max-width:640px){.bhead h2{font-size:28px;line-height:36px}}
+.bhead .bneed{margin:8px 0 0;max-width:60ch}
+.bhead .blook{margin:4px 0 0;font-size:13px;color:var(--muted)}
+.bscreens{display:flex;flex-direction:column;gap:56px;padding-left:24px;border-left:1px solid var(--line)}
+@media (max-width:640px){.bscreens{padding-left:12px}}
+.bscreens .shead{border-top:0;padding-top:0}
+.bscreens .shead h2{font-size:24px;line-height:32px}
+
+.screen{display:flex;flex-direction:column;gap:20px;scroll-margin-top:16px}
+.shead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px;border-top:1px solid var(--line-strong);padding-top:20px}
+.snum{font:700 12px/1 var(--font);letter-spacing:.08em;color:var(--muted);margin:0 0 8px}
+.shead h2{margin:0;font-size:32px;line-height:40px;font-weight:700;letter-spacing:-.025em}
+@media (max-width:640px){.shead h2{font-size:24px;line-height:32px}}
+.sside{display:flex;flex-direction:column;align-items:flex-end;gap:6px;font-size:13px;color:var(--muted)}
+@media (max-width:640px){.sside{align-items:flex-start}}
+.meter{display:flex;gap:3px;flex-wrap:wrap}
+.meter i{width:14px;height:6px;border-radius:3px;background:var(--line-strong)}
+.meter i.ok{background:var(--ok)}
+.meter i.mid{background:var(--warn)}
+.sintro{margin:0;max-width:68ch;color:var(--soft);white-space:pre-line}
+details.now summary{list-style:none;cursor:pointer;width:max-content;max-width:100%}
+details.now summary::-webkit-details-marker{display:none}
+details.now .more{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:100px;border:1px solid var(--line-strong);background:var(--overlay);font-size:13px;line-height:20px;font-weight:700}
+details.now .more::after{content:"";width:6px;height:6px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:translateY(-2px) rotate(45deg)}
+details.now[open] .more::after{transform:translateY(1px) rotate(-135deg)}
+details.now[open] .shots{margin-top:12px}
+.shots{display:flex;gap:16px;overflow-x:auto;padding-bottom:8px}
+.shot{margin:0;flex:0 0 auto;width:min-content;display:flex;flex-direction:column;gap:8px}
+.shot button{padding:0;border:1px solid var(--line-strong);border-radius:12px;overflow:hidden;background:var(--shot);line-height:0;cursor:zoom-in}
+.shot img{display:block;height:400px;width:auto;max-width:none}
+.shot.wide img{height:260px}
+@media (max-width:640px){.shot img{height:320px}.shot.wide img{height:180px}}
+.shot figcaption{font-size:13px;color:var(--muted)}
+.shot figcaption b{color:var(--fg)}
+.block-title{margin:0 0 10px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.checklist{list-style:none;margin:0;padding:0;border:1px solid var(--line);border-radius:16px;background:var(--surface);overflow:hidden}
+.ci{display:grid;grid-template-columns:28px 1fr auto;gap:12px;padding:14px 16px;border-top:1px solid var(--line);align-items:start}
+.ci:first-child{border-top:0}
+@media (max-width:640px){.ci{grid-template-columns:28px 1fr}.ci .pill{grid-column:2;justify-self:start}}
+.mark{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line-strong);display:grid;place-items:center;font-size:12px;font-weight:700}
+.mark.ok{background:var(--ok);border-color:var(--ok);color:var(--inverse-fg)}
+.mark.mid{border-color:var(--warn);color:var(--warn)}
+.mark.q{border-color:var(--q);color:var(--q)}
+.ctext{min-width:0}
+.ctext p{margin:0}
+.ctext .sub{font-size:13px;color:var(--muted);margin-top:4px;white-space:pre-line}
+.ctext .qline{font-size:13px;color:var(--q);margin-top:4px}
+.ctext .num{font:700 12px/1 var(--font);color:var(--accent);margin-right:8px}
+.pill{font:700 12px/1 var(--font);padding:7px 12px;border-radius:100px;border:1px solid var(--line);background:var(--overlay);color:var(--soft);white-space:nowrap}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.mid{background:var(--warn-soft);color:var(--warn)}
+.pill.q{background:var(--q-soft);color:var(--q)}
+.nomock{font-size:13px;color:var(--muted)}
+.sources{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}
+.src{display:flex;flex-direction:column;gap:2px;padding:14px 16px;border-radius:14px;border:1px solid var(--line);background:var(--surface);text-decoration:none}
+.src:hover{border-color:var(--focus)}
+.src b{color:var(--accent)}
+.src span{font-size:13px;color:var(--muted)}
+details.svc{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 20px}
+details.svc summary{cursor:pointer;font-weight:700}
+.svc-body ul{margin:0;padding-left:18px;color:var(--soft)}
+.svc-body h3{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:16px 0 4px}
+.msg{color:var(--muted)}
+.gate{display:flex;flex-direction:column;gap:12px;max-width:360px}
+.gate h1{margin:0 0 8px;font-size:48px;line-height:60px;letter-spacing:-.04em}
+.gate input{font:500 15px/1.4 var(--font);color:var(--fg);background:var(--overlay);border:1px solid var(--line-strong);border-radius:12px;padding:12px 14px}
+.gate button.primary{background:var(--inverse-bg);border-color:var(--inverse-bg);color:var(--inverse-fg)}
+.lb{position:fixed;inset:0;z-index:20;background:var(--scrim);display:flex;align-items:center;justify-content:center;padding:16px;cursor:zoom-out}
+.lb img{max-width:100%;max-height:100%;border-radius:12px}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"><p class="msg">Загружаю…</p></div>
+<div class="lb" id="lb" hidden><img id="lbImg" alt=""></div>
+<script>
+/* Статичный снимок: проекты в data/projects.json, проект в data/<id>.json. Статусы меняются в исходнике, сюда приезжают перевыкладкой */
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const kindOf=i=>i.kind||"fix", screenOf=i=>i.screen||i.flow||"";
+const ord=i=>typeof i.order==="number"?i.order:(()=>{const v=parseFloat(String(i.num).replace(/[^\d.]/g,""));return isNaN(v)?1e9:v})();
+const tagOf=i=>kindOf(i)==="fix"?"#"+i.num:"п. "+i.num;
+/* Данные зашифрованы (tools/encrypt.mjs): enc/meta.json даёт соль, файл лежит в enc/<sha256(соль+путь)>, внутри iv(12)+AES-GCM */
+const KEY_LS="tracker-key";
+let META=null, KEY=null;
+const b64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function nameOf(p){
+  const h=new Uint8Array(await crypto.subtle.digest("SHA-256",new Uint8Array([...b64(META.salt),...new TextEncoder().encode(p)])));
+  return [...h].map(x=>x.toString(16).padStart(2,"0")).join("").slice(0,24);
+}
+const open_=async(buf,key=KEY)=>crypto.subtle.decrypt({name:"AES-GCM",iv:buf.slice(0,12)},key,buf.slice(12));
+async function tryKey(raw){
+  const key=await crypto.subtle.importKey("raw",raw,"AES-GCM",true,["decrypt"]);
+  await open_(b64(META.check),key);
+  return key;
+}
+async function keyFromPass(pass){
+  const base=await crypto.subtle.importKey("raw",new TextEncoder().encode(pass),"PBKDF2",false,["deriveBits"]);
+  return new Uint8Array(await crypto.subtle.deriveBits({name:"PBKDF2",hash:"SHA-256",salt:b64(META.salt),iterations:META.iter},base,256));
+}
+async function unlock(){
+  META=await (await fetch("enc/meta.json",{cache:"no-cache"})).json();
+  try{const s=localStorage.getItem(KEY_LS);if(s){KEY=await tryKey(b64(s));return}}catch{}
+  await new Promise(done=>{
+    $("app").innerHTML=`<div class="top"><span class="brand">Трекер</span></div>
+      <form class="gate" id="gate"><h1>Вход</h1><input id="pw" type="password" autocomplete="current-password" placeholder="Пароль" autofocus><button class="primary">Открыть</button><p class="msg" id="gmsg"></p></form>`;
+    $("gate").addEventListener("submit",async e=>{
+      e.preventDefault(); $("gmsg").textContent="Проверяю…";
+      try{
+        const raw=await keyFromPass($("pw").value.trim()); KEY=await tryKey(raw);
+        try{localStorage.setItem(KEY_LS,btoa(String.fromCharCode(...raw)))}catch{}
+        done();
+      }catch{$("gmsg").textContent="Не тот пароль"}
+    });
+  });
+}
+const cache={}, blobs={};
+async function raw(path){
+  const r=await fetch("enc/"+await nameOf(path),{cache:"no-cache"}); if(!r.ok) throw new Error(path);
+  return open_(new Uint8Array(await r.arrayBuffer()));
+}
+async function load(path){if(!cache[path])cache[path]=JSON.parse(new TextDecoder().decode(await raw(path)));return cache[path]}
+async function blobUrl(path){
+  if(!blobs[path]){const type=/\.png$/i.test(path)?"image/png":/\.jpe?g$/i.test(path)?"image/jpeg":/\.webp$/i.test(path)?"image/webp":"";blobs[path]=URL.createObjectURL(new Blob([await raw(path)],{type}))}
+  return blobs[path];
+}
+function hydrateImages(){document.querySelectorAll("img[data-enc]").forEach(async im=>{try{im.src=await blobUrl(im.dataset.enc)}catch{}})}
+
+function view(i){
+  const k=kindOf(i), s=i.status;
+  if(s==="accepted") return {label:"принято",tone:"ok",mark:"✓"};
+  if(k==="req"){
+    if(s==="inmock") return {label:"проверь",tone:"mid",mark:"!",wait:true,why:"есть в макете, посмотри и прими"};
+    if(s==="conflict") return {label:"вопрос",tone:"q",mark:"?",wait:true,why:"источники расходятся, нужно решение"};
+    return {label:"не сделано",tone:"",mark:""};
+  }
+  if(s==="plan") return {label:"нужно го",tone:"mid",mark:"!",wait:true,why:"сессия написала план"};
+  if(s==="checked") return {label:"проверь",tone:"mid",mark:"!",wait:true,why:"сделано и проверено, посмотри и прими"};
+  if(s==="blocked") return {label:"ждёт ответа",tone:"q",mark:"…"};
+  if(s==="go"||s==="done") return {label:"в работе",tone:"",mark:"·"};
+  return {label:"не сделано",tone:"",mark:""};
+}
+function toFigma(u){
+  u=(u||"").trim(); if(!u) return "";
+  const f=u.match(/^figma:\/\/file\/([A-Za-z0-9]+)(?:\?(.*))?/);
+  if(f) return "https://www.figma.com/design/"+f[1]+"/"+(f[2]?"?"+f[2]:"");
+  const m=u.match(/figma\.com\/(?:design|file)\/([A-Za-z0-9]+)[^?]*(?:\?(.*))?/);
+  if(!m) return u;
+  const node=(m[2]||"").split("&").find(p=>p.startsWith("node-id="));
+  return "https://www.figma.com/design/"+m[1]+"/"+(node?"?"+node:"");
+}
+const fmtDate=d=>d?new Date(d+"T00:00").toLocaleDateString("ru-RU",{day:"numeric",month:"long"}):"";
+
+/* главная: все проекты */
+async function renderHome(){
+  document.title="Трекер проектов";
+  const list=await load("data/projects.json");
+  const cards=await Promise.all(list.map(async p=>{
+    let acc=0,total=0,wait=0,upd="";
+    try{const d=await load(`data/${p.id}.json`);total=d.items.length;acc=d.items.filter(i=>i.status==="accepted").length;wait=d.items.filter(i=>view(i).wait).length;upd=d.updated}catch{}
+    return `<a class="pcard" href="#${esc(p.id)}">
+      <h2>${esc(p.title)}</h2><p>${esc(p.subtitle||"")}</p>
+      ${total?`<div class="bar"><i style="width:${Math.round(acc/total*100)}%"></i></div>`:""}
+      <div class="pmeta">${p.status?`<span>${esc(p.status)}</span>`:""}${total?`<span>принято ${acc} из ${total}</span>`:""}${wait?`<span style="color:var(--warn)">ждёт тебя: ${wait}</span>`:""}${upd?`<span>снимок ${esc(fmtDate(upd))}</span>`:""}</div>
+    </a>`}));
+  $("app").innerHTML=`<div class="top"><span class="brand">Трекер</span></div>
+    <section class="intro"><h1>Проекты</h1></section>
+    <section class="projects">${cards.join("")||'<p class="msg">Проектов пока нет</p>'}</section>`;
+}
+
+/* проект */
+let P=null, area=null;
+function inArea(){return P.items.filter(i=>!P.areas||P.areas.length<2||(i.area||P.areas[P.areas.length-1].name)===area.name)}
+function checkRow(i){
+  const v=view(i), link=toFigma(i.link);
+  return `<li class="ci">
+    <span class="mark ${v.tone}">${esc(v.mark)}</span>
+    <div class="ctext"><p>${kindOf(i)==="fix"?`<span class="num">#${esc(i.num)}</span>`:""}${esc(i.text)}</p>
+      ${i.question?`<p class="qline">Вопрос: ${esc(i.question)}</p>`:""}
+      ${i.note?`<p class="sub">${esc(i.note)}</p>`:""}
+      ${i.plan?`<p class="sub">План: ${esc(i.plan)}${i.session?` · ведёт ${esc(i.session)}`:""}</p>`:""}
+      ${link?`<p class="sub"><a href="${esc(link)}" target="_blank" rel="noopener">${link.includes("figma.com/")?"в макете":esc(i.linkLabel||"открыть")}</a></p>`:""}
+    </div>
+    <span class="pill ${v.tone}">${esc(v.label)}</span>
+  </li>`;
+}
+const meter=list=>`<span class="meter">${list.map(i=>{const v=view(i);return `<i class="${v.tone==="ok"?"ok":v.tone==="mid"?"mid":""}"></i>`}).join("")}</span>`;
+function shotsLabel(s){
+  if(s.shotsLabel) return s.shotsLabel;
+  const from=new Set((s.images||[]).map(im=>im.from));
+  if(from.size===1&&from.has("Мобильное приложение")) return "Сценарий в приложении";
+  if(from.size===1&&from.has("Прод")) return "Как сейчас на проде";
+  return "Как сейчас";
+}
+function renderProject(){
+  const b=(P.briefs||{})[area.slug], all=inArea();
+  const reqs=all.filter(i=>kindOf(i)==="req"), fixes=all.filter(i=>kindOf(i)==="fix");
+  const tabs=P.areas.length>1?`<div class="tabs" role="tablist">${P.areas.map(a=>`<button class="tab" role="tab" aria-selected="${a.slug===area.slug}" data-a="${esc(a.slug)}">${esc(a.name)}</button>`).join("")}</div>`:"";
+  let intro;
+  if(!b) intro=`<h1>${esc(area.name)}</h1><p class="lead msg">Описание раздела ещё не заведено</p>`;
+  else{
+    const acc=reqs.filter(i=>i.status==="accepted").length, mock=reqs.filter(i=>i.status==="inmock").length;
+    intro=`<h1>${esc(b.title)}</h1>${b.lead?`<p class="lead">${esc(b.lead)}</p>`:""}${b.platform?`<p class="platform">${esc(b.platform)}</p>`:""}
+      <div class="progress-line">${reqs.length?`<span>требований ТЗ: <b>${reqs.length}</b></span><span>принято: <b>${acc}</b></span><span>ждут проверки: <b>${mock}</b></span>`:""}${fixes.length?`<span>правок клиента: <b>${fixes.length}</b>, принято <b>${fixes.filter(i=>i.status==="accepted").length}</b></span>`:""}</div>
+      ${(b.branches||[]).length?`<nav class="branch-nav">${b.branches.map((br,k)=>(br.screens||[]).length?`<a href="#${P.id}/${area.slug}/br-${k+1}">${esc(br.title)}: ${esc(br.role)}</a>`:"").join("")}</nav>`:""}`;
+  }
+  const sources=b&&(b.links||[]).length?`<section><p class="block-title">Где смотреть</p><div class="sources">${b.links.map(l=>`<a class="src" href="${esc(toFigma(l.url))}" target="_blank" rel="noopener"><b>${esc(l.label)}</b><span>${esc(l.why||"")}</span></a>`).join("")}</div></section>`:"";
+  const scrTitle=k=>(((b||{}).screens||[]).find(s=>s.key===k)||{}).title||k;
+  const wl=all.map(i=>({i,v:view(i)})).filter(x=>x.v.wait).sort((a,c)=>ord(a.i)-ord(c.i));
+  const wait=`<section class="wait"><h2>Ждёт тебя ${wl.length?`<span class="count">${wl.length}</span>`:""}</h2>${wl.length?wl.map(({i,v})=>`<div class="wrow"><span class="wtag">${esc(tagOf(i))}</span><div class="wtext"><p>${esc(i.text)}</p><p class="why">${esc(scrTitle(screenOf(i)))} · ${esc(v.why)}${i.question?`: ${esc(i.question)}`:""}</p></div></div>`).join(""):`<p class="wait-empty">Сейчас от тебя ничего не нужно</p>`}</section>`;
+  $("app").innerHTML=`<div class="top"><a class="brand" href="#">← Трекер · ${esc(P.title)}</a>${tabs}</div>
+    <section class="intro">${intro}<p class="stamp" style="margin-top:12px">Снимок от ${esc(fmtDate(P.updated))}</p></section>
+    ${sources}${wait}<div style="display:flex;flex-direction:column;gap:64px">${screensHtml(b,all)}</div>
+    ${P.rules?`<details class="svc"><summary>Правила проекта</summary><div class="svc-body">${rulesHtml(P.rules)}</div></details>`:""}`;
+}
+function screensHtml(b,all){
+  b=b||{};
+  const known=new Set((b.screens||[]).map(s=>s.key));
+  const branches=(b.branches||[]).filter(br=>(br.screens||[]).length);
+  const inBranch=new Set(branches.flatMap(br=>br.screens.map(String)));
+  const one=s=>{
+    const reqs=all.filter(i=>kindOf(i)==="req"&&screenOf(i)===s.key).sort((a,c)=>ord(a)-ord(c));
+    const fixes=all.filter(i=>kindOf(i)==="fix"&&screenOf(i)===s.key).sort((a,c)=>ord(a)-ord(c));
+    const fig=toFigma(s.figma);
+    const shots=(s.images||[]).map(im=>`<figure class="shot${im.wide?" wide":""}"><button data-zoom="${esc(im.src)}" aria-label="Открыть крупно"><img data-enc="${esc(im.src)}" alt="${esc(im.cap)}" loading="lazy"></button><figcaption><b>${esc(im.from)}</b> · ${esc(im.cap)}</figcaption></figure>`).join("");
+    return `<section class="screen">
+      <div class="shead"><div><h2>${esc(s.tz||s.title)}</h2></div>
+        <div class="sside">${reqs.length?meter(reqs):""}${s.n?(fig?`<a href="${esc(fig)}" target="_blank" rel="noopener">наш макет в Figma</a>`:`<span class="nomock">нашего макета пока нет</span>`):""}</div></div>
+      ${s.intro?`<p class="sintro">${esc(s.intro)}</p>`:""}
+      ${shots?`<details class="now"><summary><span class="more">${esc(shotsLabel(s))}</span></summary><div class="shots">${shots}</div></details>`:""}
+      ${reqs.length?`<div>${s.n?`<p class="block-title">Предусмотреть по ТЗ</p>`:""}<ul class="checklist">${reqs.map(checkRow).join("")}</ul></div>`:""}
+      ${fixes.length?`<div><p class="block-title">Правки клиента</p><ul class="checklist">${fixes.map(checkRow).join("")}</ul></div>`:""}
+    </section>`};
+  const common=(b.screens||[]).filter(s=>!s.n||!inBranch.has(String(s.n))).sort((a,c)=>(c.key==="Цель ТЗ")-(a.key==="Цель ТЗ"));
+  let html=branches.length?common.map(one).join(""):"";
+  html+=branches.map((br,k)=>{
+    const scr=(b.screens||[]).filter(s=>br.screens.map(String).includes(String(s.n)));
+    const keys=new Set(scr.map(s=>s.key)), reqs=all.filter(i=>kindOf(i)==="req"&&keys.has(screenOf(i)));
+    return `<section class="branch" id="br-${k+1}">
+      <div class="bhead"><div><h2>${esc(br.title)}: ${esc(br.role)}</h2>${br.need?`<p class="bneed">${esc(br.need)}</p>`:""}${br.look?`<p class="blook">Смотрим: ${esc(br.look)}</p>`:""}</div>
+        <div class="sside">${reqs.length?meter(reqs):""}</div></div>
+      <div class="bscreens">${scr.map(one).join("")}</div>
+    </section>`}).join("");
+  if(!branches.length) html+=(b.screens||[]).map(one).join("");
+  const loose=all.filter(i=>!known.has(screenOf(i))).sort((a,c)=>ord(a)-ord(c));
+  if(loose.length) html+=`<section class="screen"><div class="shead"><div><p class="snum">БЕЗ ЭКРАНА</p><h2>Остальное</h2></div></div><ul class="checklist">${loose.map(checkRow).join("")}</ul></section>`;
+  return html||`<p class="msg">Экраны раздела ещё не заведены</p>`;
+}
+function rulesHtml(r){
+  const sec=(t,a)=>a&&a.length?`<h3>${esc(t)}</h3><ul>${a.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:"";
+  return sec("Откуда что брать",r.ladder)+sec("Файлы",r.files)+sec("Как идёт правка",r.flow);
+}
+
+/* роутинг: #, #<проект>, #<проект>/<раздел>, #<проект>/<раздел>/br-N */
+async function route(){
+  const [pid,slug,anchor]=location.hash.slice(1).split("/");
+  try{
+    if(!pid){P=null;await renderHome();return}
+    P=await load(`data/${pid}.json`);
+    area=P.areas.find(a=>a.slug===slug)||P.areas[0];
+    document.title=P.title+" · Трекер";
+    renderProject(); hydrateImages();
+    if(anchor){const el=$(anchor);if(el)el.scrollIntoView()}else window.scrollTo(0,0);
+  }catch(e){$("app").innerHTML=`<p class="msg">Не загрузилось: ${esc(e.message)}. <a href="#">К проектам</a></p>`}
+}
+document.addEventListener("click",e=>{
+  const t=e.target.closest(".tab"); if(t){location.hash=P.id+"/"+t.dataset.a;return}
+  const z=e.target.closest("[data-zoom]"); if(z){blobUrl(z.dataset.zoom).then(u=>{$("lbImg").src=u;$("lb").hidden=false});return}
+  if(e.target.closest("#lb")) $("lb").hidden=true;
+});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")$("lb").hidden=true});
+unlock().then(()=>{addEventListener("hashchange",route);route()})
+  .catch(e=>{$("app").innerHTML=`<p class="msg">Не загрузилось: ${esc(e.message)}</p>`});
+</script>
+</body>
+</html>
