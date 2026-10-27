@@ -134,6 +134,15 @@ details.svc summary{cursor:pointer;font-weight:700}
 .svc-body ul{margin:0;padding-left:18px;color:var(--soft)}
 .svc-body h3{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:16px 0 4px}
 .msg{color:var(--muted)}
+/* команда: 3×2, портреты появятся в img/crew/<id>.png */
+.crew{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:820px){.crew{grid-template-columns:repeat(2,1fr)}}
+.mate{display:flex;gap:16px;align-items:center;padding:16px;border-radius:20px;border:1px solid var(--line-strong);background:var(--surface);min-width:0}
+@media (max-width:480px){.mate{flex-direction:column;align-items:flex-start;gap:12px}}
+.ava{flex:0 0 auto;width:72px;height:72px;border-radius:18px;background:var(--overlay);border:1px dashed var(--line-strong);display:grid;place-items:center;overflow:hidden;color:var(--muted)}
+.ava img{width:100%;height:100%;object-fit:cover}
+.mate h3{margin:0;font-size:16px;line-height:22px;font-weight:700;letter-spacing:-.01em}
+.mate p{margin:2px 0 0;font-size:13px;line-height:18px;color:var(--soft)}
 .gate{display:flex;flex-direction:column;gap:12px;max-width:360px}
 .gate h1{margin:0 0 8px;font-size:48px;line-height:60px;letter-spacing:-.04em}
 .gate input{font:500 15px/1.4 var(--font);color:var(--fg);background:var(--overlay);border:1px solid var(--line-strong);border-radius:12px;padding:12px 14px}
@@ -240,6 +249,20 @@ async function renderHome(){
     <section class="projects">${cards.join("")||'<p class="msg">Проектов пока нет</p>'}</section>`;
 }
 
+/* команда конвейера: одинаковая для всех проектов */
+const CREW=[
+  {id:"dispatcher",name:"Диспетчер",duty:"Раздаёт задачи и секции, следит за этапами и трекером"},
+  {id:"scout",name:"Разведчик",duty:"До рисования находит образец для каждого элемента"},
+  {id:"maker",name:"Мастер",duty:"Рисует макет строго по образцу и ДС"},
+  {id:"typographer",name:"Типограф",duty:"Висячие слова, предлоги, кавычки, тире"},
+  {id:"liner",name:"Линейщик",duty:"Отступы, выравнивание, цвета и стили из ДС"},
+  {id:"inspector",name:"Контролёр",duty:"Сверяет с ТЗ, проверяет ссылки и каждое «всё ок»"},
+];
+const AVA_STUB=`<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>`;
+const crewHtml=()=>`<section class="crew" aria-label="Команда">${CREW.map(c=>`<div class="mate">
+  <div class="ava">${c.img?`<img src="${esc(c.img)}" alt="">`:AVA_STUB}</div>
+  <div><h3>${esc(c.name)}</h3><p>${esc(c.duty)}</p></div></div>`).join("")}</section>`;
+
 /* проект */
 let P=null, area=null;
 function inArea(){return P.items.filter(i=>!P.areas||P.areas.length<2||(i.area||P.areas[P.areas.length-1].name)===area.name)}
@@ -281,6 +304,7 @@ function renderProject(){
   const wl=all.map(i=>({i,v:view(i)})).filter(x=>x.v.wait).sort((a,c)=>ord(a.i)-ord(c.i));
   const wait=`<section class="wait"><h2>Ждёт тебя ${wl.length?`<span class="count">${wl.length}</span>`:""}</h2>${wl.length?wl.map(({i,v})=>`<div class="wrow"><span class="wtag">${esc(tagOf(i))}</span><div class="wtext"><p>${esc(i.text)}</p><p class="why">${esc(scrTitle(screenOf(i)))} · ${esc(v.why)}${i.question?`: ${esc(i.question)}`:""}</p></div></div>`).join(""):`<p class="wait-empty">Сейчас от тебя ничего не нужно</p>`}</section>`;
   $("app").innerHTML=`<div class="top"><a class="brand" href="#">← Трекер · ${esc(P.title)}</a>${tabs}</div>
+    ${crewHtml()}
     <section class="intro">${intro}<p class="stamp" style="margin-top:12px">Снимок от ${esc(fmtDate(P.updated))}</p></section>
     ${sources}${wait}<div style="display:flex;flex-direction:column;gap:64px">${screensHtml(b,all)}</div>
     ${P.rules?`<details class="svc"><summary>Правила проекта</summary><div class="svc-body">${rulesHtml(P.rules)}</div></details>`:""}`;
