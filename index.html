@@ -261,7 +261,7 @@ const CREW=[
 ];
 const AVA_STUB=`<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>`;
 const crewHtml=()=>`<section class="crew" aria-label="Команда">${CREW.map(c=>`<div class="mate">
-  <div class="ava has-img"><img src="img/crew/${esc(c.id)}.png" alt="" onerror="this.parentNode.classList.remove('has-img');this.outerHTML=AVA_STUB"></div>
+  <div class="ava has-img"><img src="img/crew/${esc(c.id)}.svg" alt="" onerror="this.parentNode.classList.remove('has-img');this.outerHTML=AVA_STUB"></div>
   <div><h3>${esc(c.name)}</h3><p>${esc(c.duty)}</p></div></div>`).join("")}</section>`;
 
 /* проект */
