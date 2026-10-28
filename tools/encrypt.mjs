@@ -9,7 +9,10 @@ import { fileURLToPath } from "node:url";
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const ITER = 250000;
 const pass = readFileSync(join(root, ".password"), "utf8").trim();
-const salt = randomBytes(16);
+// соль постоянная: иначе после каждой выкладки сохранённый в браузере ключ перестаёт подходить и пароль спрашивают заново
+let salt;
+try { salt = Buffer.from(JSON.parse(readFileSync(join(root, "enc", "meta.json"), "utf8")).salt, "base64"); }
+catch { salt = randomBytes(16); }
 const key = pbkdf2Sync(pass, salt, ITER, 32, "sha256");
 
 function seal(buf) {
