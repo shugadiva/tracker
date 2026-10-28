@@ -134,17 +134,22 @@ details.svc summary{cursor:pointer;font-weight:700}
 .svc-body ul{margin:0;padding-left:18px;color:var(--soft)}
 .svc-body h3{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:16px 0 4px}
 .msg{color:var(--muted)}
-/* команда: 3×2, портреты появятся в img/crew/<id>.png */
-.crew{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:720px}
-@media (max-width:480px){.crew{grid-template-columns:repeat(2,1fr)}}
-.mate{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px;aspect-ratio:1;padding:12px;border-radius:20px;border:1px solid var(--line-strong);background:var(--surface);min-width:0;overflow:hidden}
-.ava{flex:none;width:112px;height:112px;border-radius:14px;background:var(--overlay);border:1px dashed var(--line-strong);display:grid;place-items:center;overflow:hidden;color:var(--muted)}
-@media (max-width:640px){.ava{width:72px;height:72px}.mate p{display:none}}
-.ava.has-img{border:0;background:none}
+/* команда на главной: строка = портрет слева, полное описание справа */
+.crew{display:flex;flex-direction:column;gap:12px}
+.mate{display:grid;grid-template-columns:160px 1fr;gap:24px;align-items:center;padding:20px 24px;border-radius:20px;border:1px solid var(--line-strong);background:var(--surface)}
+@media (max-width:640px){.mate{grid-template-columns:1fr;gap:12px;padding:16px}}
+.ava{width:160px;height:160px;display:grid;place-items:center;color:var(--muted)}
+@media (max-width:640px){.ava{width:112px;height:112px}}
 .ava img{width:100%;height:100%;object-fit:contain;image-rendering:pixelated}
-.mate h3{margin:0;font-size:16px;line-height:22px;font-weight:700;letter-spacing:-.01em}
-.mate .role{margin-top:2px;color:var(--accent);font-weight:700}
-.mate p{margin:2px auto 0;max-width:26ch;font-size:13px;line-height:18px;color:var(--soft)}
+.mate h3{margin:0;font-size:24px;line-height:32px;font-weight:700;letter-spacing:-.02em}
+.mate .role{margin:0;color:var(--accent);font-weight:700}
+.mate .about{margin:8px 0 0;max-width:68ch;color:var(--fg)}
+.mate ul{margin:8px 0 0;padding-left:18px;color:var(--soft);font-size:14px;line-height:21px}
+.mate li+li{margin-top:2px}
+.subs{display:flex;flex-wrap:wrap;gap:8px}
+.subs a{padding:6px 14px;border-radius:100px;border:1px solid var(--line-strong);background:var(--overlay);color:var(--fg);text-decoration:none;font-size:14px;line-height:20px;font-weight:700}
+.subs a:hover{border-color:var(--focus)}
+.home-h{margin:0;font-size:32px;line-height:40px;letter-spacing:-.025em}
 .gate{display:flex;flex-direction:column;gap:12px;max-width:360px}
 .gate h1{margin:0 0 8px;font-size:48px;line-height:60px;letter-spacing:-.04em}
 .gate input{font:500 15px/1.4 var(--font);color:var(--fg);background:var(--overlay);border:1px solid var(--line-strong);border-radius:12px;padding:12px 14px}
@@ -241,29 +246,46 @@ async function renderHome(){
   const cards=await Promise.all(list.map(async p=>{
     let acc=0,total=0,wait=0,upd="";
     try{const d=await load(`data/${p.id}.json`);total=d.items.length;acc=d.items.filter(i=>i.status==="accepted").length;wait=d.items.filter(i=>view(i).wait).length;upd=d.updated}catch{}
-    return `<a class="pcard" href="#${esc(p.id)}">
+    let areas=[];try{areas=(await load(`data/${p.id}.json`)).areas||[]}catch{}
+    return `<div class="pcard">
       <h2>${esc(p.title)}</h2><p>${esc(p.subtitle||"")}</p>
+      ${areas.length?`<nav class="subs">${areas.map(a=>`<a href="#${esc(p.id)}/${esc(a.slug)}">${esc(a.name)}</a>`).join("")}</nav>`:`<nav class="subs"><a href="#${esc(p.id)}">Открыть</a></nav>`}
       ${total?`<div class="bar"><i style="width:${Math.round(acc/total*100)}%"></i></div>`:""}
       <div class="pmeta">${p.status?`<span>${esc(p.status)}</span>`:""}${total?`<span>принято ${acc} из ${total}</span>`:""}${wait?`<span style="color:var(--warn)">ждёт тебя: ${wait}</span>`:""}${upd?`<span>снимок ${esc(fmtDate(upd))}</span>`:""}</div>
-    </a>`}));
+    </div>`}));
   $("app").innerHTML=`<div class="top"><span class="brand">Трекер</span></div>
-    <section class="intro"><h1>Проекты</h1></section>
+    <section class="intro"><h1>Команда</h1><p class="lead">Шесть зверят ведут каждую задачу по конвейеру: от поиска образца до проверки перед Дианой</p></section>
+    ${crewHtml()}
+    <h2 class="home-h">Проекты</h2>
     <section class="projects">${cards.join("")||'<p class="msg">Проектов пока нет</p>'}</section>`;
 }
 
 /* команда конвейера: одинаковая для всех проектов */
 const CREW=[
-  {id:"dispatcher",nick:"Лисичка",name:"Диспетчер",duty:"Раздаёт задачи и секции, следит за этапами и трекером"},
-  {id:"scout",nick:"Зая",name:"Разведчик",duty:"До рисования находит образец для каждого элемента"},
-  {id:"maker",nick:"Миша",name:"Мастер",duty:"Рисует макет строго по образцу и ДС"},
-  {id:"typographer",nick:"Котя",name:"Типограф",duty:"Висячие слова, предлоги, кавычки, тире"},
-  {id:"liner",nick:"Бэмби",name:"Линейщик",duty:"Отступы, выравнивание, цвета и стили из ДС"},
-  {id:"inspector",nick:"Волчок",name:"Контролёр",duty:"Сверяет с ТЗ, проверяет ссылки и каждое «всё ок»"},
+  {id:"dispatcher",nick:"Лисичка",name:"Диспетчер",
+   about:"Главная сессия. Принимает задачу от Дианы, делит её на секции и раздаёт остальным. Ведёт трекер и общий список вопросов к созвону.",
+   checks:["у каждой секции один владелец, общий компонент правит только он","этапы идут по порядку: мобилка только после одобрения десктопа","Диане уходит только то, что прошло Котю, Бэмби и Волчка"]},
+  {id:"scout",nick:"Зая",name:"Разведчик",
+   about:"Работает до рисования. Для каждого элемента экрана находит образец и ссылку на узел, собирает таблицу «элемент → образец → ссылка» и отдаёт Диане на утверждение.",
+   checks:["образец берётся из МП, LKTE, прода или ДС","старый ЛК и наши непринятые макеты образцом не считаются","всё, у чего образца нет, помечено как отсебятина"]},
+  {id:"maker",nick:"Миша",name:"Мастер",
+   about:"Рисует макет по утверждённой таблице образцов. Сам себя не принимает, готовую секцию сдаёт проверяющим.",
+   checks:["компонент образца копируется как есть, без «похожих» сборок","цвета, стили и отступы только из ДС","состояния экрана делаются клонами экрана, текст меняется диапазонами"]},
+  {id:"typographer",nick:"Котя",name:"Типограф",
+   about:"Прогоняет все тексты макета через Typograf, потом смотрит скриншот глазами. Возвращает список «фрейм → было → стало».",
+   checks:["неразрывные пробелы после предлогов и коротких слов","«ёлочки», тире, связка «число + слово»","смысловые разрывы строк, которые программа не видит"]},
+  {id:"liner",nick:"Бэмби",name:"Линейщик",
+   about:"Проверяет сетку скриптом и сверяет скриншот рядом с образцом.",
+   checks:["отступы только из шкалы ДС","одинаковое выравнивание у одинаковых элементов","цвета и стили текста из ДС, без вылетов за край и сплющенных кнопок"]},
+  {id:"inspector",nick:"Волчок",name:"Контролёр",
+   about:"Свежий взгляд в конце. Проходит по пунктам ТЗ. Без его отметки задача к Диане не попадает.",
+   checks:["каждый пункт ТЗ закрыт или помечен вопросом","каждая ссылка живая и ведёт на нужный узел","любое «этого нет» или «всё ок» подтверждено доказательством"]},
 ];
 const AVA_STUB=`<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>`;
-const crewHtml=()=>`<section class="crew" aria-label="Команда">${CREW.map(c=>`<div class="mate">
-  <div class="ava has-img"><img src="img/crew/${esc(c.id)}.png" alt="" onerror="this.parentNode.classList.remove('has-img');this.outerHTML=AVA_STUB"></div>
-  <div><h3>${esc(c.nick)}</h3><p class="role">${esc(c.name)}</p><p>${esc(c.duty)}</p></div></div>`).join("")}</section>`;
+const crewHtml=()=>`<section class="crew" aria-label="Команда">${CREW.map(c=>`<article class="mate">
+  <div class="ava"><img src="img/crew/${esc(c.id)}.png" alt="${esc(c.nick)}" onerror="this.outerHTML=AVA_STUB"></div>
+  <div><h3>${esc(c.nick)}</h3><p class="role">${esc(c.name)}</p><p class="about">${esc(c.about)}</p>
+    <ul>${c.checks.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div></article>`).join("")}</section>`;
 
 /* проект */
 let P=null, area=null;
@@ -306,7 +328,6 @@ function renderProject(){
   const wl=all.map(i=>({i,v:view(i)})).filter(x=>x.v.wait).sort((a,c)=>ord(a.i)-ord(c.i));
   const wait=`<section class="wait"><h2>Ждёт тебя ${wl.length?`<span class="count">${wl.length}</span>`:""}</h2>${wl.length?wl.map(({i,v})=>`<div class="wrow"><span class="wtag">${esc(tagOf(i))}</span><div class="wtext"><p>${esc(i.text)}</p><p class="why">${esc(scrTitle(screenOf(i)))} · ${esc(v.why)}${i.question?`: ${esc(i.question)}`:""}</p></div></div>`).join(""):`<p class="wait-empty">Сейчас от тебя ничего не нужно</p>`}</section>`;
   $("app").innerHTML=`<div class="top"><a class="brand" href="#">← Трекер · ${esc(P.title)}</a>${tabs}</div>
-    ${crewHtml()}
     <section class="intro">${intro}<p class="stamp" style="margin-top:12px">Снимок от ${esc(fmtDate(P.updated))}</p></section>
     ${sources}${wait}<div style="display:flex;flex-direction:column;gap:64px">${screensHtml(b,all)}</div>
     ${P.rules?`<details class="svc"><summary>Правила проекта</summary><div class="svc-body">${rulesHtml(P.rules)}</div></details>`:""}`;
