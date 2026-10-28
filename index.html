@@ -262,7 +262,7 @@ async function renderHome(){
       <div class="pmeta">${p.status?`<span>${esc(p.status)}</span>`:""}${total?`<span>принято ${acc} из ${total}</span>`:""}${wait?`<span style="color:var(--warn)">ждёт тебя: ${wait}</span>`:""}${upd?`<span>снимок ${esc(fmtDate(upd))}</span>`:""}</div>
     </div>`}));
   $("app").innerHTML=`<div class="top"><span class="brand">Трекер</span></div>
-    <section class="intro"><h1>Команда</h1><p class="lead">Шесть зверят ведут каждую задачу по конвейеру: от поиска образца до проверки перед Дианой</p></section>
+    <section class="intro"><h1>Команда</h1><p class="lead">Шесть зверят ведут каждую задачу по конвейеру:<br>от поиска образца до проверки перед Дианой</p></section>
     ${crewHtml()}
     <h2 class="home-h">Проекты</h2>
     <section class="projects">${cards.join("")||'<p class="msg">Проектов пока нет</p>'}</section>`;
