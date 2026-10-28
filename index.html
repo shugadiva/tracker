@@ -137,13 +137,14 @@ details.svc summary{cursor:pointer;font-weight:700}
 /* команда: 3×2, портреты появятся в img/crew/<id>.png */
 .crew{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:720px}
 @media (max-width:480px){.crew{grid-template-columns:repeat(2,1fr)}}
-.mate{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;aspect-ratio:1;padding:12px;border-radius:20px;border:1px solid var(--line-strong);background:var(--surface);min-width:0;overflow:hidden}
+.mate{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px;aspect-ratio:1;padding:12px;border-radius:20px;border:1px solid var(--line-strong);background:var(--surface);min-width:0;overflow:hidden}
 .ava{flex:none;width:112px;height:112px;border-radius:14px;background:var(--overlay);border:1px dashed var(--line-strong);display:grid;place-items:center;overflow:hidden;color:var(--muted)}
 @media (max-width:640px){.ava{width:72px;height:72px}.mate p{display:none}}
 .ava.has-img{border:0;background:none}
 .ava img{width:100%;height:100%;object-fit:contain;image-rendering:pixelated}
 .mate h3{margin:0;font-size:16px;line-height:22px;font-weight:700;letter-spacing:-.01em}
-.mate p{margin:4px auto 0;max-width:26ch;font-size:13px;line-height:18px;color:var(--soft)}
+.mate .role{margin-top:2px;color:var(--accent);font-weight:700}
+.mate p{margin:2px auto 0;max-width:26ch;font-size:13px;line-height:18px;color:var(--soft)}
 .gate{display:flex;flex-direction:column;gap:12px;max-width:360px}
 .gate h1{margin:0 0 8px;font-size:48px;line-height:60px;letter-spacing:-.04em}
 .gate input{font:500 15px/1.4 var(--font);color:var(--fg);background:var(--overlay);border:1px solid var(--line-strong);border-radius:12px;padding:12px 14px}
@@ -252,17 +253,17 @@ async function renderHome(){
 
 /* команда конвейера: одинаковая для всех проектов */
 const CREW=[
-  {id:"dispatcher",name:"Диспетчер",duty:"Раздаёт задачи и секции, следит за этапами и трекером"},
-  {id:"scout",name:"Разведчик",duty:"До рисования находит образец для каждого элемента"},
-  {id:"maker",name:"Мастер",duty:"Рисует макет строго по образцу и ДС"},
-  {id:"typographer",name:"Типограф",duty:"Висячие слова, предлоги, кавычки, тире"},
-  {id:"liner",name:"Линейщик",duty:"Отступы, выравнивание, цвета и стили из ДС"},
-  {id:"inspector",name:"Контролёр",duty:"Сверяет с ТЗ, проверяет ссылки и каждое «всё ок»"},
+  {id:"dispatcher",nick:"Лисичка",name:"Диспетчер",duty:"Раздаёт задачи и секции, следит за этапами и трекером"},
+  {id:"scout",nick:"Зая",name:"Разведчик",duty:"До рисования находит образец для каждого элемента"},
+  {id:"maker",nick:"Мишутка",name:"Мастер",duty:"Рисует макет строго по образцу и ДС"},
+  {id:"typographer",nick:"Котя",name:"Типограф",duty:"Висячие слова, предлоги, кавычки, тире"},
+  {id:"liner",nick:"Олешек",name:"Линейщик",duty:"Отступы, выравнивание, цвета и стили из ДС"},
+  {id:"inspector",nick:"Волчок",name:"Контролёр",duty:"Сверяет с ТЗ, проверяет ссылки и каждое «всё ок»"},
 ];
 const AVA_STUB=`<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>`;
 const crewHtml=()=>`<section class="crew" aria-label="Команда">${CREW.map(c=>`<div class="mate">
   <div class="ava has-img"><img src="img/crew/${esc(c.id)}.png" alt="" onerror="this.parentNode.classList.remove('has-img');this.outerHTML=AVA_STUB"></div>
-  <div><h3>${esc(c.name)}</h3><p>${esc(c.duty)}</p></div></div>`).join("")}</section>`;
+  <div><h3>${esc(c.nick)}</h3><p class="role">${esc(c.name)}</p><p>${esc(c.duty)}</p></div></div>`).join("")}</section>`;
 
 /* проект */
 let P=null, area=null;
