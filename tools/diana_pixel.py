@@ -1,4 +1,4 @@
-"""Диана: art/diana/diana-v1.png -> img/crew/diana.png, та же сетка и палитра, что у зверят (холст 64, x4)."""
+"""Диана: art/diana/diana-v2.png -> img/crew/diana.png, та же сетка и палитра, что у зверят (холст 64, x4)."""
 import sys
 import numpy as np
 from PIL import Image
@@ -6,7 +6,7 @@ from scipy import ndimage
 
 PAL = np.array([[0, 3, 9], [20, 77, 199], [90, 148, 245], [184, 215, 255], [245, 248, 255]], float)
 STEP = float(sys.argv[1]) if len(sys.argv) > 1 else 13.6   # рост ~55 клеток, как у Миши и Лисички
-im = np.asarray(Image.open("art/diana/diana-v1.png").convert("RGB")).astype(float)
+im = np.asarray(Image.open("art/diana/diana-v2.png").convert("RGB")).astype(float)
 cls = ((im[:, :, None] - PAL[None, None]) ** 2).sum(-1).argmin(-1)
 ys, xs = np.where(cls != 0)
 cls = cls[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
