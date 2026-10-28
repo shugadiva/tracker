@@ -140,10 +140,11 @@ details.svc summary{cursor:pointer;font-weight:700}
 .inbox{display:flex;flex-direction:column;gap:24px}
 .inbox h2,.scn-list>h2{margin:0;font-size:32px;line-height:40px;letter-spacing:-.025em;display:flex;align-items:center;gap:12px}
 .ib-group h3{margin:0 0 8px;font-size:12px;line-height:16px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-.ib-row{display:grid;grid-template-columns:40px 1fr auto;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.ib-row{display:grid;grid-template-columns:80px 1fr auto;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
 .ib-row:last-child{border-bottom:1px solid var(--line)}
-@media (max-width:640px){.ib-row{grid-template-columns:40px 1fr}.ib-row .ib-acts{grid-column:2;justify-content:flex-start}}
+@media (max-width:640px){.ib-row{grid-template-columns:56px 1fr}.ib-row .ib-acts{grid-column:2;justify-content:flex-start}}
 .ib-row img,.step img,.scn-host img{image-rendering:pixelated;display:block}
+@media (max-width:640px){.ib-row img{width:56px;height:56px}}
 .ib-row p{margin:0}
 .ib-row .meta{font-size:13px;color:var(--muted);margin-top:2px}
 .ib-acts{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
@@ -162,16 +163,16 @@ details.svc summary{cursor:pointer;font-weight:700}
 .scn-host b{display:block}
 .scn-host span{color:var(--muted);font-size:13px;max-width:36ch;display:block}
 .ribbon{display:flex;align-items:flex-start;gap:4px;overflow-x:auto;padding-bottom:4px}
-.step{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:64px;font-size:11px;line-height:14px;color:var(--muted);text-align:center}
-.step img{width:48px;height:48px}
+.step{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:104px;font-size:13px;line-height:16px;color:var(--muted);text-align:center}
+.step img{width:96px;height:96px}
 .step.todo img{opacity:.25;filter:grayscale(1)}
 .step.done{color:var(--fg)}
 .step.now img{animation:bob 1.2s ease-in-out infinite}
 .step.now{color:var(--accent);font-weight:700}
 @keyframes bob{50%{transform:translateY(-3px)}}
 @media (prefers-reduced-motion:reduce){.step.now img{animation:none}}
-.step .dot{width:48px;height:48px;border-radius:12px;border:1px dashed var(--line-strong);display:grid;place-items:center;font-weight:700;color:var(--muted)}
-.arrow{align-self:center;margin-top:-18px;color:var(--line-strong)}
+.step .dot{width:96px;height:96px;border-radius:20px;font-size:24px;border:1px dashed var(--line-strong);display:grid;place-items:center;font-weight:700;color:var(--muted)}
+.arrow{align-self:center;margin-top:-22px;color:var(--line-strong);font-size:20px}
 .scn-tabs{display:flex;gap:4px;flex-wrap:wrap}
 .scn-tabs button{border:0;background:none;color:var(--muted);padding:6px 12px;border-radius:100px;font-size:14px}
 .scn-tabs button[aria-selected="true"]{background:var(--inverse-bg);color:var(--inverse-fg)}
@@ -399,7 +400,7 @@ function conveyorHtml(cv){
   const row=i=>{const who=crewBy(i.from);
     const acts=i.kind==="ds"?`<button ${NOWRITE}>Да, добавить</button><button ${NOWRITE}>Нет</button>`
       :i.kind==="nosample"?`<button ${NOWRITE}>Решила</button>`:`<button ${NOWRITE}>Задала</button><button ${NOWRITE}>Ответ есть</button>`;
-    return `<div class="ib-row">${sprite(who.id,40)}<div><p>${esc(i.text)}</p><p class="meta">${esc(who.nick)} · ${esc(scnTitle(i.scenario))}</p></div><div class="ib-acts">${acts}</div></div>`};
+    return `<div class="ib-row">${sprite(who.id,80)}<div><p>${esc(i.text)}</p><p class="meta">${esc(who.nick)} · ${esc(scnTitle(i.scenario))}</p></div><div class="ib-acts">${acts}</div></div>`};
   const decide=cv.inbox.filter(i=>i.kind!=="question");
   const qs=cv.inbox.filter(i=>i.kind==="question");
   const to=[...new Set(qs.map(i=>i.to))];
@@ -411,7 +412,7 @@ function conveyorHtml(cv){
     const cur=STEP_ORDER.find(k=>c.steps[k]!=="done");
     const steps=STEP_ORDER.map(k=>{const id=k==="host"?c.host:STEP_CREW[k], who=crewBy(id);
       const st=c.steps[k]==="done"?"done":k===cur?"now":"todo";
-      return `<div class="step ${st}">${sprite(id,48)}<span>${k==="host"?"рисует":esc(who.nick)}</span></div>`}).join('<span class="arrow">›</span>')
+      return `<div class="step ${st}">${sprite(id,96)}<span>${k==="host"?"рисует":esc(who.nick)}</span></div>`}).join('<span class="arrow">›</span>')
       +`<span class="arrow">›</span><div class="step ${cur?"todo":"now"}"><div class="dot">Д</div><span>Диана</span></div>`;
     const samples=c.samples.length?`<table class="tbl"><thead><tr><th>Элемент</th><th>Образец</th><th class="lvl">Откуда</th><th>Статус</th></tr></thead><tbody>${c.samples.map(r=>{const [l,t]=SAMPLE_ST[r.status]||[r.status,""];return `<tr><td>${esc(r.el)}</td><td>${esc(r.src)}</td><td class="lvl">${esc(r.level)}</td><td><span class="chip ${t}">${esc(l)}</span></td></tr>`}).join("")}</tbody></table>`:`<p class="empty">Зая ещё не собрала таблицу</p>`;
     const notes=(c.notes||[]).length?`<table class="tbl"><tbody>${c.notes.map(n=>`<tr><td>${esc(crewBy(n.from).nick)}</td><td>${esc(n.text)}</td><td>${esc(n.fix||"")}</td></tr>`).join("")}</tbody></table>`:`<p class="empty">Котя, Совушка, Бэмби и Миша этот сценарий ещё не проверяли</p>`;
@@ -421,7 +422,7 @@ function conveyorHtml(cv){
     const tabs=[["s","Образцы",samples],["n","Замечания",notes],["t",`ТЗ · ${c.tz.length}`,tz],["q",`Вопросы · ${myq.length}`,qtab]];
     return `<section class="scn" id="scn-${esc(c.id)}">
       <div class="scn-h"><div><h3>${esc(c.title)}</h3><p class="role">${esc(c.role)} · <a href="${esc(c.figma)}" target="_blank" rel="noopener">в макете</a></p></div>
-        <div class="scn-host">${sprite(host.id,48)}<div><b>Хозяин: ${esc(host.nick)}</b><span>${esc(c.why)}</span></div></div></div>
+        <div class="scn-host">${sprite(host.id,96)}<div><b>Хозяин: ${esc(host.nick)}</b><span>${esc(c.why)}</span></div></div></div>
       <div class="ribbon" aria-label="Конвейер">${steps}</div>
       <div class="scn-tabs" role="tablist">${tabs.map(([k,l],n)=>`<button role="tab" aria-selected="${n===0}" data-sctab="${esc(c.id)}:${k}">${l}</button>`).join("")}</div>
       ${tabs.map(([k,,h],n)=>`<div class="scn-pane${n===0?" on":""}" data-pane="${esc(c.id)}:${k}">${h}</div>`).join("")}
