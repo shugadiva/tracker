@@ -1,0 +1,11 @@
+Combine the two reference sheets: take the RPG party from the FIRST reference (six tiny pixel-art sprites with poses and work tools, side-facing idle stance) and dress them as the chibi kids in animal onesies (kigurumi) from the SECOND reference - each character is a little kid wearing a hooded animal onesie with ears, face visible inside the hood, onesie tail behind.
+Six characters in a 3 columns x 2 rows grid, same order and same tools as the first reference:
+1. fox onesie kid wearing a headset with microphone;
+2. rabbit onesie kid with a small explorer hat on the hood, holding a spyglass up;
+3. bear onesie kid with a beret on the hood, holding a big pencil;
+4. cat onesie kid with round glasses, holding a quill;
+5. deer onesie kid with antlers on the hood, holding a ruler;
+6. wolf onesie kid holding a magnifying glass.
+Keep the RPG sprite proportions and dynamic poses, cute faces with dot eyes and pale blue blush.
+Crisp true pixel art on a visible pixel grid, chunky pixels, no anti-aliasing, no blur, no gradients, outlines in royal blue (no black), small pixel sparkles, evenly spaced, same scale, no text.
+Palette strictly: near-black navy #000309 background, royal blue #144DC7, mid blue #5A94F5, pale blue #B8D7FF, near-white #F5F8FF. No other hues.

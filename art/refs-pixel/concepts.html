@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Пиксельные концепты</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700&display=swap">
+<style>
+:root{color-scheme:dark;--bg:#000309;--fg:#F5F8FF;--muted:#7A7D84;--line:rgb(245 248 255 / .12);--accent:#B8D7FF}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:500 15px/1.55 Manrope,system-ui,sans-serif}
+.wrap{max-width:1200px;margin:0 auto;padding:32px 16px 80px;display:flex;flex-direction:column;gap:56px}
+h1{margin:0;font-size:40px;line-height:48px;letter-spacing:-.03em}
+.lead{margin:8px 0 0;color:var(--muted)}
+.c{display:flex;flex-direction:column;gap:16px}
+.c h2{margin:0;font-size:28px;line-height:36px;letter-spacing:-.02em}
+.c h2 span{color:var(--accent)}
+.c p{margin:0;max-width:70ch;color:#9AA3B2}
+.c img{width:100%;border-radius:20px;border:1px solid var(--line);image-rendering:pixelated;background:#000309}
+.refs{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.refs img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;border:1px solid var(--line)}
+.lb{position:fixed;inset:0;background:rgb(0 3 9 / .94);display:none;align-items:center;justify-content:center;padding:16px;cursor:zoom-out}
+.lb.on{display:flex}.lb img{max-width:100%;max-height:100%;image-rendering:pixelated}
+img{cursor:zoom-in}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><h1>Пиксельная команда</h1><p class="lead">Три концепта в палитре айдентики. Нажми на картинку, чтобы открыть крупно</p></header>
+
+  <section class="c"><h2><span>new</span> RPG-отряд в кигуруми</h2>
+    <p>Смесь третьего и первого: дети-сотрудники в пижамах зверят, у каждого свой инструмент и поза</p>
+    <img src="pixel-rpg-kigurumi.png" alt="RPG-отряд в кигуруми"></section>
+
+  <section class="c"><h2><span>1</span> Кигуруми-команда</h2>
+    <p>Человечки в пижамах зверят. На пузе значок роли: наушники, подзорная труба, карандаш, «А», линейка, лупа. Ближе всего к рефам с пижамками</p>
+    <img src="pixel-kigurumi.png" alt="Кигуруми-команда"></section>
+
+  <section class="c"><h2><span>2</span> Тамагочи-статусы</h2>
+    <p>Зверята в полный рост с большими глазами, над головой облачко «…», «✓», «!», «?». В трекере облачко может показывать живой статус: работает, ждёт тебя, готово</p>
+    <img src="pixel-tamagotchi.png" alt="Тамагочи"></section>
+
+  <section class="c"><h2><span>3</span> RPG-отряд</h2>
+    <p>Зверята в курточках с инструментами, как отряд в игре: лиса в гарнитуре, заяц с подзорной трубой, медведь в берете с карандашом, кот в очках с пером, олень с линейкой, волк с лупой</p>
+    <img src="pixel-rpg.png" alt="RPG-отряд"></section>
+
+  <section class="c"><h2>Рефы с доски</h2>
+    <div class="refs"><img src="r1.jpg" alt=""><img src="r2.jpg" alt=""><img src="r3.jpg" alt=""><img src="r4.jpg" alt=""><img src="r5.jpg" alt=""><img src="r6.jpg" alt=""><img src="r7.jpg" alt=""><img src="r8.jpg" alt=""><img src="r9.jpg" alt=""></div></section>
+</div>
+<div class="lb" id="lb"><img id="lbi" alt=""></div>
+<script>
+document.addEventListener("click",e=>{const lb=document.getElementById("lb");
+  if(e.target.closest("#lb")){lb.classList.remove("on");return}
+  if(e.target.tagName==="IMG"){document.getElementById("lbi").src=e.target.src;lb.classList.add("on")}});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")document.getElementById("lb").classList.remove("on")});
+</script>
+</body>
+</html>

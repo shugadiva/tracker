@@ -141,7 +141,7 @@ details.svc summary{cursor:pointer;font-weight:700}
 @media (max-width:480px){.mate{flex-direction:column;align-items:flex-start;gap:12px}}
 .ava{flex:0 0 auto;width:72px;height:72px;border-radius:18px;background:var(--overlay);border:1px dashed var(--line-strong);display:grid;place-items:center;overflow:hidden;color:var(--muted)}
 .ava.has-img{border:0;background:none}
-.ava img{width:100%;height:100%;object-fit:contain}
+.ava img{width:100%;height:100%;object-fit:contain;image-rendering:pixelated}
 .mate h3{margin:0;font-size:16px;line-height:22px;font-weight:700;letter-spacing:-.01em}
 .mate p{margin:2px 0 0;font-size:13px;line-height:18px;color:var(--soft)}
 .gate{display:flex;flex-direction:column;gap:12px;max-width:360px}
@@ -261,7 +261,7 @@ const CREW=[
 ];
 const AVA_STUB=`<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>`;
 const crewHtml=()=>`<section class="crew" aria-label="Команда">${CREW.map(c=>`<div class="mate">
-  <div class="ava has-img"><img src="img/crew/${esc(c.id)}.svg" alt="" onerror="this.parentNode.classList.remove('has-img');this.outerHTML=AVA_STUB"></div>
+  <div class="ava has-img"><img src="img/crew/${esc(c.id)}.png" alt="" onerror="this.parentNode.classList.remove('has-img');this.outerHTML=AVA_STUB"></div>
   <div><h3>${esc(c.name)}</h3><p>${esc(c.duty)}</p></div></div>`).join("")}</section>`;
 
 /* проект */
