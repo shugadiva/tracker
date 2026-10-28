@@ -403,10 +403,9 @@ function conveyorHtml(cv){
     return `<div class="ib-row">${sprite(who.id,80)}<div><p>${esc(i.text)}</p><p class="meta">${esc(who.nick)} · ${esc(scnTitle(i.scenario))}${i.link?` · <a href="${esc(toFigma(i.link))}">открыть в Figma ↗</a>`:""}</p></div><div class="ib-acts">${acts}</div></div>`};
   const decide=cv.inbox.filter(i=>i.kind!=="question");
   const qs=cv.inbox.filter(i=>i.kind==="question");
-  const to=[...new Set(qs.map(i=>i.to))];
-  const inbox=`<section class="inbox"><h2>Ждёт тебя <span class="count">${cv.inbox.length}</span></h2>
-    ${decide.length?`<div class="ib-group"><h3>Решить в макете</h3>${decide.map(row).join("")}</div>`:""}
-    ${to.map(t=>`<div class="ib-group"><h3>Вопросы ${esc(t)}</h3>${qs.filter(i=>i.to===t).map(row).join("")}</div>`).join("")}</section>`;
+  const inbox=`<section class="inbox"><h2>Ждёт тебя ${decide.length?`<span class="count">${decide.length}</span>`:""}</h2>
+    ${decide.length?`<div class="ib-group">${decide.map(row).join("")}</div>`:`<p class="empty">Сейчас от тебя ничего не нужно</p>`}</section>
+    ${qs.length?`<section class="inbox"><h2>Вопросы <span class="count">${qs.length}</span></h2><div class="ib-group">${qs.map(row).join("")}</div></section>`:""}`;
   const scn=c=>{
     const host=crewBy(c.host);
     const cur=STEP_ORDER.find(k=>c.steps[k]!=="done");
