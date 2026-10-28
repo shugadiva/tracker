@@ -356,7 +356,7 @@ const AVA_STUB=`<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stro
 const crewHtml=()=>`<div class="crew">${CREW.map(c=>`<section class="mate" id="crew-${esc(c.id)}">
   <header class="mate-h"><h2>${esc(c.nick)}</h2><span class="role">${esc(c.name)}</span></header>
   <div class="mate-b">
-    <div class="ava"><img src="img/crew/${esc(c.id)}.png" alt="${esc(c.nick)}" onerror="this.outerHTML=AVA_STUB"></div>
+    <div class="ava"><img src="img/crew/${esc(c.id)}.png?v=${CREW_V}" alt="${esc(c.nick)}" onerror="this.outerHTML=AVA_STUB"></div>
     <div><p class="about">${esc(c.about)}</p>
       <dl class="stats"><dt>Специализация</dt><dd>${esc(c.spec)}</dd><dt>Ведёт</dt><dd>${esc(c.leads)}</dd><dt>Где работает</dt><dd>${esc(c.where)}</dd></dl>
       <h3>Проверяет во всех сценариях</h3><ul>${c.checks.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
@@ -391,7 +391,9 @@ function shotsLabel(s){
 const STEP_ORDER=["zaya","host","kotya","sovushka","bembi","misha","volchok"];
 const STEP_CREW={zaya:"scout",kotya:"typographer",sovushka:"colorist",bembi:"liner",misha:"maker",volchok:"inspector"};
 const crewBy=id=>CREW.find(c=>c.id===id)||{id,nick:id,name:""};
-const sprite=(id,size)=>`<img src="img/crew/${esc(id)}.png" width="${size}" height="${size}" alt="">`;
+/* версия спрайтов: поменял картинку в img/crew, подними число, иначе браузер покажет старую из кэша */
+const CREW_V=5;
+const sprite=(id,size)=>`<img src="img/crew/${esc(id)}.png?v=${CREW_V}" width="${size}" height="${size}" alt="">`;
 const SAMPLE_ST={approved:["принят","ok"],wait:["ждёт тебя","mid"],none:["нет образца","q"]};
 const TZ_ST={inmock:["в макете, ждёт Волчка",""],question:["вопрос","q"],accepted:["принято","ok"]};
 const NOWRITE=`disabled title="Кнопки заработают, когда подключим запись"`;
