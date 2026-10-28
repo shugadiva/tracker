@@ -6,7 +6,7 @@ from PIL import Image
 from scipy import ndimage
 
 PAL = np.array([[0, 3, 9], [20, 77, 199], [90, 148, 245], [184, 215, 255], [245, 248, 255]], float)
-STEP = float(sys.argv[1]) if len(sys.argv) > 1 else 13.6   # рост ~55 клеток, как у Миши и Лисички
+STEP = float(sys.argv[1]) if len(sys.argv) > 1 else 12.4   # рост ~61 клетка: человек выше зверят в костюмах, при 55 клетках Диана казалась меньше всех (узкая фигура)
 im = np.asarray(Image.open("art/diana/diana-v3.png").convert("RGB")).astype(float)
 cls = ((im[:, :, None] - PAL[None, None]) ** 2).sum(-1).argmin(-1)
 ys, xs = np.where(cls != 0)

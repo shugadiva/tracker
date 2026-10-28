@@ -392,7 +392,7 @@ const STEP_ORDER=["zaya","host","kotya","sovushka","bembi","misha","volchok"];
 const STEP_CREW={zaya:"scout",kotya:"typographer",sovushka:"colorist",bembi:"liner",misha:"maker",volchok:"inspector"};
 const crewBy=id=>CREW.find(c=>c.id===id)||{id,nick:id,name:""};
 /* версия спрайтов: поменял картинку в img/crew, подними число, иначе браузер покажет старую из кэша */
-const CREW_V=5;
+const CREW_V=6;
 const sprite=(id,size)=>`<img src="img/crew/${esc(id)}.png?v=${CREW_V}" width="${size}" height="${size}" alt="">`;
 const SAMPLE_ST={approved:["принят","ok"],wait:["ждёт тебя","mid"],none:["нет образца","q"]};
 const TZ_ST={inmock:["в макете, ждёт Волчка",""],question:["вопрос","q"],accepted:["принято","ok"]};
