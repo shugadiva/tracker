@@ -134,18 +134,26 @@ details.svc summary{cursor:pointer;font-weight:700}
 .svc-body ul{margin:0;padding-left:18px;color:var(--soft)}
 .svc-body h3{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:16px 0 4px}
 .msg{color:var(--muted)}
-/* команда на главной: строка = портрет слева, полное описание справа */
-.crew{display:flex;flex-direction:column;gap:12px}
-.mate{display:grid;grid-template-columns:160px 1fr;gap:24px;align-items:center;padding:20px 24px;border-radius:20px;background:var(--surface)}
-@media (max-width:640px){.mate{grid-template-columns:1fr;gap:12px;padding:16px}}
+/* команда на главной: статья в духе игровой вики — заголовок, портрет, описание, характеристики; между статьями линия */
+.crew{display:flex;flex-direction:column}
+.mate{display:flex;flex-direction:column;gap:16px;padding:32px 0}
+.mate+.mate{border-top:1px solid var(--line-strong)}
+.mate:first-child{padding-top:8px}
+.mate-h{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.mate-h h2{margin:0;font-size:32px;line-height:40px;font-weight:700;letter-spacing:-.025em}
+.mate-h .role{font-size:14px;line-height:20px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.08em}
+.mate-b{display:grid;grid-template-columns:160px 1fr;gap:32px;align-items:start}
+@media (max-width:640px){.mate-b{grid-template-columns:1fr;gap:16px}}
 .ava{width:160px;height:160px;display:grid;place-items:center;color:var(--muted)}
-@media (max-width:640px){.ava{width:112px;height:112px}}
+@media (max-width:640px){.ava{width:128px;height:128px}}
 .ava img{width:100%;height:100%;object-fit:contain;image-rendering:pixelated}
-.mate h3{margin:0;font-size:24px;line-height:32px;font-weight:700;letter-spacing:-.02em}
-.mate .role{margin:0;color:var(--accent);font-weight:700}
-.mate .about{margin:8px 0 0;max-width:68ch;color:var(--fg)}
-.mate ul{margin:8px 0 0;padding-left:18px;color:var(--soft);font-size:14px;line-height:21px}
-.mate li+li{margin-top:2px}
+.mate .about{margin:0;max-width:68ch;font-size:16px;line-height:24px}
+.stats{display:grid;grid-template-columns:max-content 1fr;margin:16px 0 0;max-width:560px;border-top:1px solid var(--line)}
+.stats dt,.stats dd{margin:0;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px;line-height:20px}
+.stats dt{padding-right:24px;color:var(--muted);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;line-height:20px}
+.stats dd{color:var(--fg)}
+.mate h3{margin:20px 0 0;font-size:12px;line-height:16px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.mate ul{margin:8px 0 0;padding-left:18px;color:var(--soft);font-size:14px;line-height:22px;max-width:68ch}
 .subs{display:flex;flex-wrap:wrap;gap:8px}
 .subs a{padding:6px 14px;border-radius:100px;border:1px solid var(--line-strong);background:var(--overlay);color:var(--fg);text-decoration:none;font-size:14px;line-height:20px;font-weight:700}
 .subs a:hover{border-color:var(--focus)}
@@ -262,30 +270,34 @@ async function renderHome(){
 
 /* команда конвейера: одинаковая для всех проектов */
 const CREW=[
-  {id:"dispatcher",nick:"Лисичка",name:"Диспетчер",
+  {stage:"весь конвейер",item:"гарнитура",call:"в начале любой задачи",id:"dispatcher",nick:"Лисичка",name:"Диспетчер",
    about:"Главная сессия. Принимает задачу от Дианы, делит её на секции и раздаёт остальным. Ведёт трекер и общий список вопросов к созвону.",
    checks:["у каждой секции один владелец, общий компонент правит только он","этапы идут по порядку: мобилка только после одобрения десктопа","Диане уходит только то, что прошло Котю, Бэмби и Волчка"]},
-  {id:"scout",nick:"Зая",name:"Разведчик",
+  {stage:"1 · до рисования",item:"подзорная труба",call:"новый экран или элемент без образца",id:"scout",nick:"Зая",name:"Разведчик",
    about:"Работает до рисования. Для каждого элемента экрана находит образец и ссылку на узел, собирает таблицу «элемент → образец → ссылка» и отдаёт Диане на утверждение.",
    checks:["образец берётся из МП, LKTE, прода или ДС","старый ЛК и наши непринятые макеты образцом не считаются","всё, у чего образца нет, помечено как отсебятина"]},
-  {id:"maker",nick:"Миша",name:"Мастер",
+  {stage:"2 · макет",item:"карандаш",call:"таблица образцов утверждена",id:"maker",nick:"Миша",name:"Мастер",
    about:"Рисует макет по утверждённой таблице образцов. Сам себя не принимает, готовую секцию сдаёт проверяющим.",
    checks:["компонент образца копируется как есть, без «похожих» сборок","цвета, стили и отступы только из ДС","состояния экрана делаются клонами экрана, текст меняется диапазонами"]},
-  {id:"typographer",nick:"Котя",name:"Типограф",
+  {stage:"3 · тексты",item:"перо",call:"секция нарисована",id:"typographer",nick:"Котя",name:"Типограф",
    about:"Прогоняет все тексты макета через Typograf, потом смотрит скриншот глазами. Возвращает список «фрейм → было → стало».",
    checks:["неразрывные пробелы после предлогов и коротких слов","«ёлочки», тире, связка «число + слово»","смысловые разрывы строк, которые программа не видит"]},
-  {id:"liner",nick:"Бэмби",name:"Линейщик",
+  {stage:"4 · сетка",item:"линейка",call:"секция нарисована",id:"liner",nick:"Бэмби",name:"Линейщик",
    about:"Проверяет сетку скриптом и сверяет скриншот рядом с образцом.",
    checks:["отступы только из шкалы ДС","одинаковое выравнивание у одинаковых элементов","цвета и стили текста из ДС, без вылетов за край и сплющенных кнопок"]},
-  {id:"inspector",nick:"Волчок",name:"Контролёр",
+  {stage:"5 · финальная проверка",item:"лупа",call:"перед показом Диане",id:"inspector",nick:"Волчок",name:"Контролёр",
    about:"Свежий взгляд в конце. Проходит по пунктам ТЗ. Без его отметки задача к Диане не попадает.",
    checks:["каждый пункт ТЗ закрыт или помечен вопросом","каждая ссылка живая и ведёт на нужный узел","любое «этого нет» или «всё ок» подтверждено доказательством"]},
 ];
 const AVA_STUB=`<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>`;
-const crewHtml=()=>`<section class="crew" aria-label="Команда">${CREW.map(c=>`<article class="mate">
-  <div class="ava"><img src="img/crew/${esc(c.id)}.png" alt="${esc(c.nick)}" onerror="this.outerHTML=AVA_STUB"></div>
-  <div><h3>${esc(c.nick)}</h3><p class="role">${esc(c.name)}</p><p class="about">${esc(c.about)}</p>
-    <ul>${c.checks.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div></article>`).join("")}</section>`;
+const crewHtml=()=>`<div class="crew">${CREW.map(c=>`<section class="mate" id="crew-${esc(c.id)}">
+  <header class="mate-h"><h2>${esc(c.nick)}</h2><span class="role">${esc(c.name)}</span></header>
+  <div class="mate-b">
+    <div class="ava"><img src="img/crew/${esc(c.id)}.png" alt="${esc(c.nick)}" onerror="this.outerHTML=AVA_STUB"></div>
+    <div><p class="about">${esc(c.about)}</p>
+      <dl class="stats"><dt>Этап</dt><dd>${esc(c.stage)}</dd><dt>Предмет</dt><dd>${esc(c.item)}</dd><dt>Зовут, когда</dt><dd>${esc(c.call)}</dd></dl>
+      <h3>Проверяет</h3><ul>${c.checks.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+  </div></section>`).join("")}</div>`;
 
 /* проект */
 let P=null, area=null;
