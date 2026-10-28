@@ -301,7 +301,7 @@ const crewHtml=()=>`<div class="crew">${CREW.map(c=>`<section class="mate" id="c
   <div class="mate-b">
     <div class="ava"><img src="img/crew/${esc(c.id)}.png" alt="${esc(c.nick)}" onerror="this.outerHTML=AVA_STUB"></div>
     <div><p class="about">${esc(c.about)}</p>
-      <dl class="stats"><dt>Специализация</dt><dd>${esc(c.spec)}</dd><dt>Ведёт</dt><dd>${esc(c.leads)}</dd><dt>Где работает</dt><dd>${esc(c.where)}</dd><dt>Предмет</dt><dd>${esc(c.item)}</dd></dl>
+      <dl class="stats"><dt>Специализация</dt><dd>${esc(c.spec)}</dd><dt>Ведёт</dt><dd>${esc(c.leads)}</dd><dt>Где работает</dt><dd>${esc(c.where)}</dd></dl>
       <h3>Проверяет во всех сценариях</h3><ul>${c.checks.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
   </div></section>`).join("")}</div>`;
 
