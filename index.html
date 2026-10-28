@@ -134,6 +134,53 @@ details.svc summary{cursor:pointer;font-weight:700}
 .svc-body ul{margin:0;padding-left:18px;color:var(--soft)}
 .svc-body h3{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:16px 0 4px}
 .msg{color:var(--muted)}
+/* конвейер раздела: «Ждёт тебя», сценарии с лентой зверят и вкладками */
+.cv-note{margin:0;padding:12px 16px;border-left:2px solid var(--accent);color:var(--soft);max-width:80ch}
+.inbox{display:flex;flex-direction:column;gap:24px}
+.inbox h2,.scn-list>h2{margin:0;font-size:32px;line-height:40px;letter-spacing:-.025em;display:flex;align-items:center;gap:12px}
+.ib-group h3{margin:0 0 8px;font-size:12px;line-height:16px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.ib-row{display:grid;grid-template-columns:40px 1fr auto;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.ib-row:last-child{border-bottom:1px solid var(--line)}
+@media (max-width:640px){.ib-row{grid-template-columns:40px 1fr}.ib-row .ib-acts{grid-column:2;justify-content:flex-start}}
+.ib-row img,.step img,.scn-host img{image-rendering:pixelated;display:block}
+.ib-row p{margin:0}
+.ib-row .meta{font-size:13px;color:var(--muted);margin-top:2px}
+.ib-acts{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.ib-acts button{font-size:12px;line-height:16px;padding:6px 12px;border-radius:10px}
+.ib-acts button:disabled{opacity:.5;cursor:not-allowed}
+.chip{display:inline-block;font-size:12px;line-height:16px;font-weight:700;padding:2px 8px;border-radius:100px;background:var(--overlay);border:1px solid var(--line);color:var(--soft);white-space:nowrap}
+.chip.ok{background:var(--ok-soft);color:var(--ok);border-color:transparent}
+.chip.mid{background:var(--warn-soft);color:var(--warn);border-color:transparent}
+.chip.q{background:var(--q-soft);color:var(--q);border-color:transparent}
+.scn-list{display:flex;flex-direction:column;gap:8px}
+.scn{display:flex;flex-direction:column;gap:16px;padding:24px 0;border-top:1px solid var(--line-strong)}
+.scn-h{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:16px}
+.scn-h h3{margin:0;font-size:24px;line-height:32px;letter-spacing:-.02em}
+.scn-h .role{margin:2px 0 0;font-size:14px;color:var(--muted)}
+.scn-host{display:flex;align-items:center;gap:10px;font-size:14px}
+.scn-host b{display:block}
+.scn-host span{color:var(--muted);font-size:13px;max-width:36ch;display:block}
+.ribbon{display:flex;align-items:flex-start;gap:4px;overflow-x:auto;padding-bottom:4px}
+.step{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:64px;font-size:11px;line-height:14px;color:var(--muted);text-align:center}
+.step img{width:48px;height:48px}
+.step.todo img{opacity:.25;filter:grayscale(1)}
+.step.done{color:var(--fg)}
+.step.now img{animation:bob 1.2s ease-in-out infinite}
+.step.now{color:var(--accent);font-weight:700}
+@keyframes bob{50%{transform:translateY(-3px)}}
+@media (prefers-reduced-motion:reduce){.step.now img{animation:none}}
+.step .dot{width:48px;height:48px;border-radius:12px;border:1px dashed var(--line-strong);display:grid;place-items:center;font-weight:700;color:var(--muted)}
+.arrow{align-self:center;margin-top:-18px;color:var(--line-strong)}
+.scn-tabs{display:flex;gap:4px;flex-wrap:wrap}
+.scn-tabs button{border:0;background:none;color:var(--muted);padding:6px 12px;border-radius:100px;font-size:14px}
+.scn-tabs button[aria-selected="true"]{background:var(--inverse-bg);color:var(--inverse-fg)}
+.scn-pane{display:none}.scn-pane.on{display:block}
+.tbl{width:100%;border-collapse:collapse;font-size:14px;line-height:20px}
+.tbl th{text-align:left;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:8px 12px 8px 0;border-bottom:1px solid var(--line-strong)}
+.tbl td{padding:10px 12px 10px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl td:last-child,.tbl th:last-child{text-align:right;padding-right:0}
+@media (max-width:640px){.tbl .lvl{display:none}}
+.empty{margin:0;color:var(--muted)}
 /* команда на главной: статья в духе игровой вики — заголовок, портрет, описание, характеристики; между статьями линия */
 .crew{display:flex;flex-direction:column}
 .mate{display:flex;flex-direction:column;gap:16px;padding:32px 0}
@@ -337,8 +384,52 @@ function shotsLabel(s){
   if(from.size===1&&from.has("Прод")) return "Как сейчас на проде";
   return "Как сейчас";
 }
+
+/* конвейер раздела: данные в data/conveyor-<проект>.json */
+const STEP_ORDER=["zaya","host","kotya","sovushka","bembi","misha","volchok"];
+const STEP_CREW={zaya:"scout",kotya:"typographer",sovushka:"colorist",bembi:"liner",misha:"maker",volchok:"inspector"};
+const crewBy=id=>CREW.find(c=>c.id===id)||{id,nick:id,name:""};
+const sprite=(id,size)=>`<img src="img/crew/${esc(id)}.png" width="${size}" height="${size}" alt="">`;
+const SAMPLE_ST={approved:["принят","ok"],wait:["ждёт тебя","mid"],none:["нет образца","q"]};
+const TZ_ST={inmock:["в макете, ждёт Волчка",""],question:["вопрос","q"],accepted:["принято","ok"]};
+const NOWRITE=`disabled title="Кнопки заработают, когда подключим запись"`;
+function conveyorHtml(cv){
+  const scnTitle=id=>(cv.scenarios.find(x=>x.id===id)||{}).title||"";
+  const row=i=>{const who=crewBy(i.from);
+    const acts=i.kind==="ds"?`<button ${NOWRITE}>Да, добавить</button><button ${NOWRITE}>Нет</button>`
+      :i.kind==="nosample"?`<button ${NOWRITE}>Решила</button>`:`<button ${NOWRITE}>Задала</button><button ${NOWRITE}>Ответ есть</button>`;
+    return `<div class="ib-row">${sprite(who.id,40)}<div><p>${esc(i.text)}</p><p class="meta">${esc(who.nick)} · ${esc(scnTitle(i.scenario))}</p></div><div class="ib-acts">${acts}</div></div>`};
+  const decide=cv.inbox.filter(i=>i.kind!=="question");
+  const qs=cv.inbox.filter(i=>i.kind==="question");
+  const to=[...new Set(qs.map(i=>i.to))];
+  const inbox=`<section class="inbox"><h2>Ждёт тебя <span class="count">${cv.inbox.length}</span></h2>
+    ${decide.length?`<div class="ib-group"><h3>Решить в макете</h3>${decide.map(row).join("")}</div>`:""}
+    ${to.map(t=>`<div class="ib-group"><h3>Вопросы ${esc(t)}</h3>${qs.filter(i=>i.to===t).map(row).join("")}</div>`).join("")}</section>`;
+  const scn=c=>{
+    const host=crewBy(c.host);
+    const cur=STEP_ORDER.find(k=>c.steps[k]!=="done");
+    const steps=STEP_ORDER.map(k=>{const id=k==="host"?c.host:STEP_CREW[k], who=crewBy(id);
+      const st=c.steps[k]==="done"?"done":k===cur?"now":"todo";
+      return `<div class="step ${st}">${sprite(id,48)}<span>${k==="host"?"рисует":esc(who.nick)}</span></div>`}).join('<span class="arrow">›</span>')
+      +`<span class="arrow">›</span><div class="step ${cur?"todo":"now"}"><div class="dot">Д</div><span>Диана</span></div>`;
+    const samples=c.samples.length?`<table class="tbl"><thead><tr><th>Элемент</th><th>Образец</th><th class="lvl">Откуда</th><th>Статус</th></tr></thead><tbody>${c.samples.map(r=>{const [l,t]=SAMPLE_ST[r.status]||[r.status,""];return `<tr><td>${esc(r.el)}</td><td>${esc(r.src)}</td><td class="lvl">${esc(r.level)}</td><td><span class="chip ${t}">${esc(l)}</span></td></tr>`}).join("")}</tbody></table>`:`<p class="empty">Зая ещё не собрала таблицу</p>`;
+    const notes=(c.notes||[]).length?`<table class="tbl"><tbody>${c.notes.map(n=>`<tr><td>${esc(crewBy(n.from).nick)}</td><td>${esc(n.text)}</td><td>${esc(n.fix||"")}</td></tr>`).join("")}</tbody></table>`:`<p class="empty">Котя, Совушка, Бэмби и Миша этот сценарий ещё не проверяли</p>`;
+    const tz=`<table class="tbl"><thead><tr><th>Пункт ТЗ</th><th>Статус</th></tr></thead><tbody>${c.tz.map(r=>{const [l,t]=TZ_ST[r.status]||[r.status,""];return `<tr><td>${esc(r.text)}</td><td><span class="chip ${t}">${esc(l)}</span></td></tr>`}).join("")}</tbody></table>`;
+    const myq=cv.inbox.filter(i=>i.scenario===c.id);
+    const qtab=myq.length?myq.map(row).join(""):`<p class="empty">Вопросов нет</p>`;
+    const tabs=[["s","Образцы",samples],["n","Замечания",notes],["t",`ТЗ · ${c.tz.length}`,tz],["q",`Вопросы · ${myq.length}`,qtab]];
+    return `<section class="scn" id="scn-${esc(c.id)}">
+      <div class="scn-h"><div><h3>${esc(c.title)}</h3><p class="role">${esc(c.role)} · <a href="${esc(c.figma)}" target="_blank" rel="noopener">в макете</a></p></div>
+        <div class="scn-host">${sprite(host.id,48)}<div><b>Хозяин: ${esc(host.nick)}</b><span>${esc(c.why)}</span></div></div></div>
+      <div class="ribbon" aria-label="Конвейер">${steps}</div>
+      <div class="scn-tabs" role="tablist">${tabs.map(([k,l],n)=>`<button role="tab" aria-selected="${n===0}" data-sctab="${esc(c.id)}:${k}">${l}</button>`).join("")}</div>
+      ${tabs.map(([k,,h],n)=>`<div class="scn-pane${n===0?" on":""}" data-pane="${esc(c.id)}:${k}">${h}</div>`).join("")}
+    </section>`};
+  return `${cv.note?`<p class="cv-note">${esc(cv.note)}</p>`:""}${inbox}
+    <section class="scn-list"><h2>Сценарии</h2>${cv.scenarios.map(scn).join("")}</section>`;
+}
 function renderProject(){
-  const b=(P.briefs||{})[area.slug], all=inArea();
+  const b=(P.briefs||{})[area.slug], all=inArea(), conv=(P.conveyor||{})[area.slug];
   const reqs=all.filter(i=>kindOf(i)==="req"), fixes=all.filter(i=>kindOf(i)==="fix");
   const tabs=P.areas.length>1?`<div class="tabs" role="tablist">${P.areas.map(a=>`<button class="tab" role="tab" aria-selected="${a.slug===area.slug}" data-a="${esc(a.slug)}">${esc(a.name)}</button>`).join("")}</div>`:"";
   let intro;
@@ -355,7 +446,7 @@ function renderProject(){
   const wait=`<section class="wait"><h2>Ждёт тебя ${wl.length?`<span class="count">${wl.length}</span>`:""}</h2>${wl.length?wl.map(({i,v})=>`<div class="wrow"><span class="wtag">${esc(tagOf(i))}</span><div class="wtext"><p>${esc(i.text)}</p><p class="why">${esc(scrTitle(screenOf(i)))} · ${esc(v.why)}${i.question?`: ${esc(i.question)}`:""}</p></div></div>`).join(""):`<p class="wait-empty">Сейчас от тебя ничего не нужно</p>`}</section>`;
   $("app").innerHTML=`<div class="top"><a class="brand" href="#">← Трекер · ${esc(P.title)}</a>${tabs}</div>
     <section class="intro">${intro}<p class="stamp" style="margin-top:12px">Снимок от ${esc(fmtDate(P.updated))}</p></section>
-    ${sources}${wait}<div style="display:flex;flex-direction:column;gap:64px">${screensHtml(b,all)}</div>
+    ${conv?conveyorHtml(conv)+sources:`${sources}${wait}<div style="display:flex;flex-direction:column;gap:64px">${screensHtml(b,all)}</div>`}
     ${P.rules?`<details class="svc"><summary>Правила проекта</summary><div class="svc-body">${rulesHtml(P.rules)}</div></details>`:""}`;
 }
 function screensHtml(b,all){
@@ -402,6 +493,7 @@ async function route(){
   try{
     if(!pid){P=null;await renderHome();return}
     P=await load(`data/${pid}.json`);
+    if(P.conveyor===undefined){try{P.conveyor=await load(`data/conveyor-${pid}.json`)}catch{P.conveyor=null}}
     area=P.areas.find(a=>a.slug===slug)||P.areas[0];
     document.title=P.title+" · Трекер";
     renderProject(); hydrateImages();
@@ -409,6 +501,9 @@ async function route(){
   }catch(e){$("app").innerHTML=`<p class="msg">Не загрузилось: ${esc(e.message)}. <a href="#">К проектам</a></p>`}
 }
 document.addEventListener("click",e=>{
+  const st=e.target.closest("[data-sctab]"); if(st){const [id]=st.dataset.sctab.split(":");
+    document.querySelectorAll(`[data-sctab^="${id}:"]`).forEach(b=>b.setAttribute("aria-selected",b===st));
+    document.querySelectorAll(`[data-pane^="${id}:"]`).forEach(p=>p.classList.toggle("on",p.dataset.pane===st.dataset.sctab));return}
   const t=e.target.closest(".tab"); if(t){location.hash=P.id+"/"+t.dataset.a;return}
   const z=e.target.closest("[data-zoom]"); if(z){blobUrl(z.dataset.zoom).then(u=>{$("lbImg").src=u;$("lb").hidden=false});return}
   if(e.target.closest("#lb")) $("lb").hidden=true;
