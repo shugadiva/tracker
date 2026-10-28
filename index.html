@@ -400,7 +400,7 @@ function conveyorHtml(cv){
   const row=i=>{const who=crewBy(i.from);
     const acts=i.kind==="ds"?`<button ${NOWRITE}>Да, добавить</button><button ${NOWRITE}>Нет</button>`
       :i.kind==="nosample"?`<button ${NOWRITE}>Решила</button>`:`<button ${NOWRITE}>Задала</button><button ${NOWRITE}>Ответ есть</button>`;
-    return `<div class="ib-row">${sprite(who.id,80)}<div><p>${esc(i.text)}</p><p class="meta">${esc(who.nick)} · ${esc(scnTitle(i.scenario))}${i.link?` · <a href="${esc(toFigma(i.link))}">открыть в Figma ↗</a>`:""}</p></div><div class="ib-acts">${acts}</div></div>`};
+    return `<div class="ib-row">${sprite(who.id,80)}<div><p>${esc(i.text)}</p><p class="meta">${esc(who.nick)} · ${esc(scnTitle(i.scenario))}${i.link?` · <a href="${esc(toFigma(i.link))}">открыть в Figma ↗</a>`:""}</p></div></div>`};
   const decide=cv.inbox.filter(i=>i.kind!=="question");
   const qs=cv.inbox.filter(i=>i.kind==="question");
   const inbox=`<section class="inbox"><h2>Ждёт тебя ${decide.length?`<span class="count">${decide.length}</span>`:""}</h2>
