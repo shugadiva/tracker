@@ -1,4 +1,5 @@
-"""Диана: art/diana/diana-v2.png -> img/crew/diana.png, та же сетка и палитра, что у зверят (холст 64, x4)."""
+"""Диана: art/diana/diana-v2.png -> img/crew/diana.png, та же сетка и палитра, что у зверят (холст 64, x4).
+Зверята смотрят направо, Диана отражена и смотрит налево, на них."""
 import sys
 import numpy as np
 from PIL import Image
@@ -23,4 +24,4 @@ print("grid", W, "x", H)
 S = 64
 canvas = Image.new("RGBA", (S, S))
 canvas.paste(Image.fromarray(rgba, "RGBA"), ((S - W) // 2, S - 1 - H))
-canvas.resize((S * 4, S * 4), Image.NEAREST).save("img/crew/diana.png")
+canvas.transpose(Image.FLIP_LEFT_RIGHT).resize((S * 4, S * 4), Image.NEAREST).save("img/crew/diana.png")
