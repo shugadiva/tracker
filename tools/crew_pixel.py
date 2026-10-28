@@ -26,6 +26,7 @@ print("grid", W, "x", H)
 body = small != 0
 lab, n = ndimage.label(body)
 sizes = ndimage.sum(body, lab, range(1, n + 1))
+sprites = []
 for k, name in enumerate(IDS):
     c0, c1 = (k % 3) * W // 3, (k % 3 + 1) * W // 3
     r0, r1 = (k // 3) * H // 2, (k // 3 + 1) * H // 2
@@ -42,6 +43,13 @@ for k, name in enumerate(IDS):
     m = mask[y0:y1, x0:x1]
     rgba[py:py + sub.shape[0], px:px + sub.shape[1], :3] = PAL[sub].astype(np.uint8)
     rgba[py:py + sub.shape[0], px:px + sub.shape[1], 3] = m * 255
-    scale = max(1, 256 // side)
-    Image.fromarray(rgba, "RGBA").resize((side * scale, side * scale), Image.NEAREST).save(f"img/crew/{name}.png")
-    print(name, side, "px")
+    sprites.append((name, rgba))
+
+# общий холст по самому крупному (зая): у всех одинаковый размер пикселя, стоят по низу
+S = max(r.shape[0] for _, r in sprites)
+for name, rgba in sprites:
+    img = Image.fromarray(rgba, "RGBA").crop(Image.fromarray(rgba, "RGBA").getbbox())
+    canvas = Image.new("RGBA", (S, S))
+    canvas.paste(img, ((S - img.width) // 2, S - 1 - img.height))
+    canvas.resize((S * 4, S * 4), Image.NEAREST).save(f"img/crew/{name}.png")
+    print(name, img.size, "on", S)
