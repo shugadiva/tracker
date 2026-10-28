@@ -265,7 +265,7 @@ async function renderHome(){
       <div class="pmeta">${p.status?`<span>${esc(p.status)}</span>`:""}${total?`<span>принято ${acc} из ${total}</span>`:""}${wait?`<span style="color:var(--warn)">ждёт тебя: ${wait}</span>`:""}${upd?`<span>снимок ${esc(fmtDate(upd))}</span>`:""}</div>
     </div>`}));
   $("app").innerHTML=`<div class="top"><span class="brand">Трекер</span></div>
-    <figure class="office"><img src="img/crew/office.png" alt="Зверята работают в офисе, Котя и Совушка болтают у кулера"></figure>
+    <figure class="office"><img src="img/crew/office.png?v=2" alt="Зверята работают в офисе, Котя и Совушка болтают у кулера"></figure>
     <section class="intro"><h1>Команда</h1><p class="lead">У каждого сценария свой хозяин,<br>а проверяет его вся команда</p></section>
     ${crewHtml()}
     <h2 class="home-h">Проекты</h2>
