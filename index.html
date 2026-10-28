@@ -412,7 +412,7 @@ function conveyorHtml(cv){
     const steps=STEP_ORDER.map(k=>{const id=k==="host"?c.host:STEP_CREW[k], who=crewBy(id);
       const st=c.steps[k]==="done"?"done":k===cur?"now":"todo";
       return `<div class="step ${st}">${sprite(id,96)}<span>${k==="host"?"рисует":esc(who.nick)}</span></div>`}).join('<span class="arrow">›</span>')
-      +`<span class="arrow">›</span><div class="step ${cur?"todo":"now"}"><div class="dot">Д</div><span>Диана</span></div>`;
+      +`<span class="arrow">›</span><div class="step ${cur?"todo":"now"}">${sprite("diana",96)}<span>Диана</span></div>`;
     const samples=c.samples.length?`<table class="tbl"><thead><tr><th>Элемент</th><th>Образец</th><th class="lvl">Откуда</th><th>Статус</th></tr></thead><tbody>${c.samples.map(r=>{const [l,t]=SAMPLE_ST[r.status]||[r.status,""];return `<tr><td>${r.link?`<a href="${esc(toFigma(r.link))}">${esc(r.el)}</a>`:esc(r.el)}</td><td>${esc(r.src)}</td><td class="lvl">${esc(r.level)}</td><td><span class="chip ${t}">${esc(l)}</span></td></tr>`}).join("")}</tbody></table>`:`<p class="empty">Зая ещё не собрала таблицу</p>`;
     const notes=(c.notes||[]).length?`<table class="tbl"><tbody>${c.notes.map(n=>`<tr><td>${esc(crewBy(n.from).nick)}</td><td>${esc(n.text)}</td><td>${esc(n.fix||"")}</td></tr>`).join("")}</tbody></table>`:`<p class="empty">Котя, Совушка, Бэмби и Миша этот сценарий ещё не проверяли</p>`;
     const tz=`<table class="tbl"><thead><tr><th>Пункт ТЗ</th><th>Статус</th></tr></thead><tbody>${c.tz.map(r=>{const [l,t]=TZ_ST[r.status]||[r.status,""];return `<tr><td>${esc(r.text)}</td><td><span class="chip ${t}">${esc(l)}</span></td></tr>`}).join("")}</tbody></table>`;
