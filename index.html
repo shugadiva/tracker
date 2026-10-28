@@ -157,6 +157,9 @@ details.svc summary{cursor:pointer;font-weight:700}
 .subs{display:flex;flex-wrap:wrap;gap:8px}
 .subs a{padding:6px 14px;border-radius:100px;border:1px solid var(--line-strong);background:var(--overlay);color:var(--fg);text-decoration:none;font-size:14px;line-height:20px;font-weight:700}
 .subs a:hover{border-color:var(--focus)}
+/* офис под командой: на всю ширину колонки, как линии-разделители */
+.office{margin:0;border-top:1px solid var(--line-strong);padding-top:32px}
+.office img{display:block;width:100%;height:auto;image-rendering:pixelated}
 .home-h{margin:0;font-size:32px;line-height:40px;letter-spacing:-.025em}
 .gate{display:flex;flex-direction:column;gap:12px;max-width:360px}
 .gate h1{margin:0 0 8px;font-size:48px;line-height:60px;letter-spacing:-.04em}
@@ -264,6 +267,7 @@ async function renderHome(){
   $("app").innerHTML=`<div class="top"><span class="brand">Трекер</span></div>
     <section class="intro"><h1>Команда</h1><p class="lead">У каждого сценария свой хозяин,<br>а проверяет его вся команда</p></section>
     ${crewHtml()}
+    <figure class="office"><img src="img/crew/office.png" alt="Зверята работают в офисе, Котя и Совушка болтают у кулера" loading="lazy"></figure>
     <h2 class="home-h">Проекты</h2>
     <section class="projects">${cards.join("")||'<p class="msg">Проектов пока нет</p>'}</section>`;
 }
