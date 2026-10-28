@@ -311,7 +311,7 @@ async function renderHome(){
       <h2>${esc(p.title)}</h2><p>${esc(p.subtitle||"")}</p>
       ${areas.length?`<nav class="subs">${areas.map(a=>`<a href="#${esc(p.id)}/${esc(a.slug)}">${esc(a.name)}</a>`).join("")}</nav>`:`<nav class="subs"><a href="#${esc(p.id)}">Открыть</a></nav>`}
       ${total?`<div class="bar"><i style="width:${Math.round(acc/total*100)}%"></i></div>`:""}
-      <div class="pmeta">${p.status?`<span>${esc(p.status)}</span>`:""}${total?`<span>принято ${acc} из ${total}</span>`:""}${wait?`<span style="color:var(--warn)">ждёт тебя: ${wait}</span>`:""}${upd?`<span>снимок ${esc(fmtDate(upd))}</span>`:""}</div>
+      <div class="pmeta">${p.status?`<span>${esc(p.status)}</span>`:""}${total?`<span>принято ${acc} из ${total}</span>`:""}${wait?`<span style="color:var(--warn)">ждёт тебя: ${wait}</span>`:""}</div>
     </div>`}));
   $("app").innerHTML=`<div class="top"><span class="brand">Трекер</span></div>
     <section class="intro"><h1>Команда</h1></section>
@@ -447,7 +447,7 @@ function renderProject(){
   const wl=all.map(i=>({i,v:view(i)})).filter(x=>x.v.wait).sort((a,c)=>ord(a.i)-ord(c.i));
   const wait=`<section class="wait"><h2>Ждёт тебя ${wl.length?`<span class="count">${wl.length}</span>`:""}</h2>${wl.length?wl.map(({i,v})=>`<div class="wrow"><span class="wtag">${esc(tagOf(i))}</span><div class="wtext"><p>${esc(i.text)}</p><p class="why">${esc(scrTitle(screenOf(i)))} · ${esc(v.why)}${i.question?`: ${esc(i.question)}`:""}</p></div></div>`).join(""):`<p class="wait-empty">Сейчас от тебя ничего не нужно</p>`}</section>`;
   $("app").innerHTML=`<div class="top"><a class="brand" href="#">← Трекер · ${esc(P.title)}</a>${tabs}</div>
-    <section class="intro">${intro}<p class="stamp" style="margin-top:12px">Снимок от ${esc(fmtDate(P.updated))}</p></section>
+    <section class="intro">${intro}</section>
     ${conv?conveyorHtml(conv)+sources:`${sources}${wait}<div style="display:flex;flex-direction:column;gap:64px">${screensHtml(b,all)}</div>`}
     ${P.rules?`<details class="svc"><summary>Правила проекта</summary><div class="svc-body">${rulesHtml(P.rules)}</div></details>`:""}`;
 }
