@@ -288,14 +288,14 @@ function view(i){
   if(s==="go"||s==="done") return {label:"в работе",tone:"",mark:"·"};
   return {label:"не сделано",tone:"",mark:""};
 }
+/* ссылки на Figma открываем в приложении: figma://file/<ключ>?node-id=... */
 function toFigma(u){
   u=(u||"").trim(); if(!u) return "";
   const f=u.match(/^figma:\/\/file\/([A-Za-z0-9]+)(?:\?(.*))?/);
-  if(f) return "https://www.figma.com/design/"+f[1]+"/"+(f[2]?"?"+f[2]:"");
-  const m=u.match(/figma\.com\/(?:design|file)\/([A-Za-z0-9]+)[^?]*(?:\?(.*))?/);
+  const m=f||u.match(/figma\.com\/(?:design|file)\/([A-Za-z0-9]+)[^?]*(?:\?(.*))?/);
   if(!m) return u;
   const node=(m[2]||"").split("&").find(p=>p.startsWith("node-id="));
-  return "https://www.figma.com/design/"+m[1]+"/"+(node?"?"+node:"");
+  return "figma://file/"+m[1]+(node?"?"+node.replace(":","-"):"");
 }
 const fmtDate=d=>d?new Date(d+"T00:00").toLocaleDateString("ru-RU",{day:"numeric",month:"long"}):"";
 
@@ -373,7 +373,7 @@ function checkRow(i){
       ${i.question?`<p class="qline">Вопрос: ${esc(i.question)}</p>`:""}
       ${i.note?`<p class="sub">${esc(i.note)}</p>`:""}
       ${i.plan?`<p class="sub">План: ${esc(i.plan)}${i.session?` · ведёт ${esc(i.session)}`:""}</p>`:""}
-      ${link?`<p class="sub"><a href="${esc(link)}" target="_blank" rel="noopener">${link.includes("figma.com/")?"в макете":esc(i.linkLabel||"открыть")}</a></p>`:""}
+      ${link?`<p class="sub"><a href="${esc(link)}" target="_blank" rel="noopener">${link.startsWith("figma:")?"в макете":esc(i.linkLabel||"открыть")}</a></p>`:""}
     </div>
     <span class="pill ${v.tone}">${esc(v.label)}</span>
   </li>`;
@@ -400,7 +400,7 @@ function conveyorHtml(cv){
   const row=i=>{const who=crewBy(i.from);
     const acts=i.kind==="ds"?`<button ${NOWRITE}>Да, добавить</button><button ${NOWRITE}>Нет</button>`
       :i.kind==="nosample"?`<button ${NOWRITE}>Решила</button>`:`<button ${NOWRITE}>Задала</button><button ${NOWRITE}>Ответ есть</button>`;
-    return `<div class="ib-row">${sprite(who.id,80)}<div><p>${esc(i.text)}</p><p class="meta">${esc(who.nick)} · ${esc(scnTitle(i.scenario))}${i.link?` · <a href="${esc(i.link)}" target="_blank" rel="noopener">открыть в Figma ↗</a>`:""}</p></div><div class="ib-acts">${acts}</div></div>`};
+    return `<div class="ib-row">${sprite(who.id,80)}<div><p>${esc(i.text)}</p><p class="meta">${esc(who.nick)} · ${esc(scnTitle(i.scenario))}${i.link?` · <a href="${esc(toFigma(i.link))}">открыть в Figma ↗</a>`:""}</p></div><div class="ib-acts">${acts}</div></div>`};
   const decide=cv.inbox.filter(i=>i.kind!=="question");
   const qs=cv.inbox.filter(i=>i.kind==="question");
   const to=[...new Set(qs.map(i=>i.to))];
@@ -414,14 +414,14 @@ function conveyorHtml(cv){
       const st=c.steps[k]==="done"?"done":k===cur?"now":"todo";
       return `<div class="step ${st}">${sprite(id,96)}<span>${k==="host"?"рисует":esc(who.nick)}</span></div>`}).join('<span class="arrow">›</span>')
       +`<span class="arrow">›</span><div class="step ${cur?"todo":"now"}"><div class="dot">Д</div><span>Диана</span></div>`;
-    const samples=c.samples.length?`<table class="tbl"><thead><tr><th>Элемент</th><th>Образец</th><th class="lvl">Откуда</th><th>Статус</th></tr></thead><tbody>${c.samples.map(r=>{const [l,t]=SAMPLE_ST[r.status]||[r.status,""];return `<tr><td>${r.link?`<a href="${esc(r.link)}" target="_blank" rel="noopener">${esc(r.el)}</a>`:esc(r.el)}</td><td>${esc(r.src)}</td><td class="lvl">${esc(r.level)}</td><td><span class="chip ${t}">${esc(l)}</span></td></tr>`}).join("")}</tbody></table>`:`<p class="empty">Зая ещё не собрала таблицу</p>`;
+    const samples=c.samples.length?`<table class="tbl"><thead><tr><th>Элемент</th><th>Образец</th><th class="lvl">Откуда</th><th>Статус</th></tr></thead><tbody>${c.samples.map(r=>{const [l,t]=SAMPLE_ST[r.status]||[r.status,""];return `<tr><td>${r.link?`<a href="${esc(toFigma(r.link))}">${esc(r.el)}</a>`:esc(r.el)}</td><td>${esc(r.src)}</td><td class="lvl">${esc(r.level)}</td><td><span class="chip ${t}">${esc(l)}</span></td></tr>`}).join("")}</tbody></table>`:`<p class="empty">Зая ещё не собрала таблицу</p>`;
     const notes=(c.notes||[]).length?`<table class="tbl"><tbody>${c.notes.map(n=>`<tr><td>${esc(crewBy(n.from).nick)}</td><td>${esc(n.text)}</td><td>${esc(n.fix||"")}</td></tr>`).join("")}</tbody></table>`:`<p class="empty">Котя, Совушка, Бэмби и Миша этот сценарий ещё не проверяли</p>`;
     const tz=`<table class="tbl"><thead><tr><th>Пункт ТЗ</th><th>Статус</th></tr></thead><tbody>${c.tz.map(r=>{const [l,t]=TZ_ST[r.status]||[r.status,""];return `<tr><td>${esc(r.text)}</td><td><span class="chip ${t}">${esc(l)}</span></td></tr>`}).join("")}</tbody></table>`;
     const myq=cv.inbox.filter(i=>i.scenario===c.id);
     const qtab=myq.length?myq.map(row).join(""):`<p class="empty">Вопросов нет</p>`;
     const tabs=[["s","Образцы",samples],["n","Замечания",notes],["t",`ТЗ · ${c.tz.length}`,tz],["q",`Вопросы · ${myq.length}`,qtab]];
     return `<section class="scn" id="scn-${esc(c.id)}">
-      <div class="scn-h"><div><h3>${esc(c.title)}</h3><p class="role">${esc(c.role)} · <a href="${esc(c.figma)}" target="_blank" rel="noopener">в макете</a></p></div>
+      <div class="scn-h"><div><h3>${esc(c.title)}</h3><p class="role">${esc(c.role)} · <a href="${esc(toFigma(c.figma))}">в макете</a></p></div>
         <div class="scn-host">${sprite(host.id,96)}<div><b>Хозяин: ${esc(host.nick)}</b><span>${esc(c.why)}</span></div></div></div>
       <div class="ribbon" aria-label="Конвейер">${steps}</div>
       <div class="scn-tabs" role="tablist">${tabs.map(([k,l],n)=>`<button role="tab" aria-selected="${n===0}" data-sctab="${esc(c.id)}:${k}">${l}</button>`).join("")}</div>
