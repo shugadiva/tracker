@@ -157,10 +157,6 @@ details.svc summary{cursor:pointer;font-weight:700}
 .subs{display:flex;flex-wrap:wrap;gap:8px}
 .subs a{padding:6px 14px;border-radius:100px;border:1px solid var(--line-strong);background:var(--overlay);color:var(--fg);text-decoration:none;font-size:14px;line-height:20px;font-weight:700}
 .subs a:hover{border-color:var(--focus)}
-.flow ol{margin:16px 0 0;padding-left:22px;max-width:72ch;display:flex;flex-direction:column;gap:8px;font-size:16px;line-height:24px}
-.flow li::marker{color:var(--accent);font-weight:700}
-.flow b{color:var(--accent)}
-.flow .rule{margin:16px 0 0;padding:12px 16px;border-left:2px solid var(--accent);color:var(--soft);max-width:72ch}
 .home-h{margin:0;font-size:32px;line-height:40px;letter-spacing:-.025em}
 .gate{display:flex;flex-direction:column;gap:12px;max-width:360px}
 .gate h1{margin:0 0 8px;font-size:48px;line-height:60px;letter-spacing:-.04em}
@@ -267,13 +263,6 @@ async function renderHome(){
     </div>`}));
   $("app").innerHTML=`<div class="top"><span class="brand">Трекер</span></div>
     <section class="intro"><h1>Команда</h1><p class="lead">У каждого сценария свой хозяин,<br>а проверяет его вся команда</p></section>
-    <section class="flow"><h2 class="home-h">Как работает</h2><ol>
-      <li><b>Лисичка</b> делит макет на сценарии и назначает каждому хозяина по специализации: тексты — Котя, таблицы — Миша</li>
-      <li><b>Зая</b> находит образцы для каждого сценария, Диана их утверждает</li>
-      <li><b>Хозяин</b> рисует свой сценарий в своей сессии и отвечает за него до конца</li>
-      <li><b>Лисичка</b> прогоняет сценарий через свежих проверяющих: Котя, Бэмби, Миша, последним Волчок. Найденное исправляет хозяин</li>
-      <li>Готовый сценарий уходит Диане</li></ol>
-      <p class="rule">Себя не проверяем: проверяющий — всегда новый субагент, который не видел, как рисовалось</p></section>
     ${crewHtml()}
     <h2 class="home-h">Проекты</h2>
     <section class="projects">${cards.join("")||'<p class="msg">Проектов пока нет</p>'}</section>`;
