@@ -125,7 +125,7 @@ async function gate(){
 
 function render(d){
   const total=d.payments.reduce((s,p)=>s+p.sum,0);
-  const todo=d.payments.filter(p=>!p.receipt);
+  const todo=d.payments.filter(p=>!p.receipt&&!p.skip);
   const noRc=todo.reduce((s,p)=>s+p.sum,0);
   const debt=d.projects.filter(p=>p.tone==="ok").reduce((s,p)=>s+(p.sum-p.got),0);
   const field=(label,val)=>`<div class="field"><div><span>${label}</span><p>${esc(val)}</p></div><button type="button" data-copy="${esc(val)}">Копировать</button></div>`;
@@ -136,7 +136,7 @@ function render(d){
   </header>
   <div class="stats">
     <div class="stat"><b>${rub(total)}</b><span>получено всего</span></div>
-    <div class="stat ok"><b>${rub(total-noRc)}</b><span>закрыто чеками</span></div>
+    <div class="stat ok"><b>${rub(d.payments.filter(p=>p.receipt).reduce((s,p)=>s+p.sum,0))}</b><span>закрыто чеками</span></div>
     <div class="stat ${noRc?"warn":""}"><b>${rub(noRc)}</b><span>без чека</span></div>
     <div class="stat"><b>${rub(debt)}</b><span>долг клиента</span></div>
   </div>
@@ -161,7 +161,7 @@ function render(d){
         <td class="date">${esc(p.date)}</td>
         <td>${esc(p.what)}${p.receipt?`<small>${p.lines.map(l=>esc(l[0])+" — "+rub(l[1])).join(" · ")}</small>`:""}</td>
         <td class="num">${rub(p.sum)}</td>
-        <td>${p.receipt?`<a class="chip ok" href="${esc(p.url)}" target="_blank" rel="noopener">№${esc(p.receipt)} ↗</a>`:`<span class="chip warn">не выдан</span>`}</td>
+        <td>${p.receipt?`<a class="chip ok" href="${esc(p.url)}" target="_blank" rel="noopener">№${esc(p.receipt)} ↗</a>`:p.skip?`<span class="chip" title="${esc(p.skip)}">не нужен</span>`:`<span class="chip warn">не выдан</span>`}</td>
       </tr>`).join("")}
       <tr class="total"><td></td><td>Всего</td><td class="num">${rub(total)}</td><td></td></tr>
     </table></div>
