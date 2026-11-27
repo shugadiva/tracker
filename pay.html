@@ -132,7 +132,7 @@ function render(d){
   $("app").innerHTML=TOPBAR+`
   <header>
     <h1>Оплаты и чеки</h1>
-    <p class="lead">${todo.length?`Осталось выбить <b>${todo.length} ${todo.length===1?"чек":todo.length<5?"чека":"чеков"}</b> на ${rub(noRc)}. Всё выставленное оплачено.`:`Все чеки выданы, всё выставленное оплачено.`}</p>
+    <p class="lead">${todo.length?`Осталось выбить <b>${todo.length} ${todo.length===1?"чек":todo.length<5?"чека":"чеков"}</b> на ${rub(noRc)}. Всё выставленное оплачено.`:`Долгов нет, все чеки выданы и отправлены.`}</p>
   </header>
   <div class="stats">
     <div class="stat"><b>${rub(total)}</b><span>получено всего</span></div>
