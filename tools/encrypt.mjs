@@ -25,7 +25,8 @@ const walk = d => readdirSync(d).flatMap(f => statSync(join(d, f)).isDirectory()
 const out = join(root, "enc");
 rmSync(out, { recursive: true, force: true });
 mkdirSync(out);
-const files = walk(join(root, "src"));
+// pay.json шифруется отдельно своим паролем (tools/pay_build.mjs), в общий enc его класть нельзя
+const files = walk(join(root, "src")).filter(f => !/[\\/]data[\\/]pay\.json$/.test(f));
 for (const f of files) {
   const p = relative(join(root, "src"), f).split("\\").join("/");
   writeFileSync(join(out, nameOf(p)), seal(readFileSync(f)));
