@@ -100,7 +100,7 @@ const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const rub=n=>n==null?"—":n.toLocaleString("ru-RU").replace(/ |\s/g," ")+" ₽";
 const b64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
-const top=`<div class="top"><a class="brand" href="./">← Трекер</a><span class="stamp" id="stamp"></span></div>`;
+const TOPBAR=`<div class="top"><a class="brand" href="./">← Трекер</a><span class="stamp" id="stamp"></span></div>`;
 
 async function decrypt(pack,pass){
   const base=await crypto.subtle.importKey("raw",new TextEncoder().encode(pass),"PBKDF2",false,["deriveKey"]);
@@ -113,7 +113,7 @@ async function decrypt(pack,pass){
 /* Пароль спрашиваем при каждом открытии и нигде не запоминаем */
 async function gate(){
   const pack=await (await fetch("pay.dat",{cache:"no-cache"})).json();
-  $("app").innerHTML=top+`<form class="gate" id="gate"><h1>Оплаты</h1>
+  $("app").innerHTML=TOPBAR+`<form class="gate" id="gate"><h1>Оплаты</h1>
     <input id="pw" type="password" inputmode="numeric" autocomplete="off" placeholder="••••" autofocus>
     <button>Открыть</button><p class="msg" id="gmsg"></p></form>`;
   $("gate").addEventListener("submit",async e=>{
@@ -129,7 +129,7 @@ function render(d){
   const noRc=todo.reduce((s,p)=>s+p.sum,0);
   const debt=d.projects.filter(p=>p.tone==="ok").reduce((s,p)=>s+(p.sum-p.got),0);
   const field=(label,val)=>`<div class="field"><div><span>${label}</span><p>${esc(val)}</p></div><button type="button" data-copy="${esc(val)}">Копировать</button></div>`;
-  $("app").innerHTML=top+`
+  $("app").innerHTML=TOPBAR+`
   <header>
     <h1>Оплаты и чеки</h1>
     <p class="lead">${todo.length?`Осталось выбить <b>${todo.length} ${todo.length===1?"чек":todo.length<5?"чека":"чеков"}</b> на ${rub(noRc)}. Всё выставленное оплачено.`:`Все чеки выданы, всё выставленное оплачено.`}</p>
